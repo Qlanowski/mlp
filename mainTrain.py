@@ -1,5 +1,6 @@
 import getopt
 import sys
+import pandas as pd
 
 from train.trainConfig import TrainConfig
 
@@ -15,7 +16,7 @@ def main(argv):
                '-m <momentum> -p <0 - cls | 1 - reg> ' \
                '-i <input_file>'
     try:
-        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i",
+        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:",
                                    ["help", "layers=", "activation_function=", "bias=", "batch_size=",
                                     "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input="])
     except getopt.GetoptError:
@@ -52,7 +53,8 @@ if __name__ == "__main__":
     # read config
     config = main(sys.argv[1:])
     # load data
-
+    df = pd.read_csv(config.input_file)
     # initialize trainer
+
     # train
     # save net

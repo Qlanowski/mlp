@@ -1,4 +1,4 @@
-from train.activationFunction import ActivationFunction
+from train.functions.activationFunction import ActivationFunction
 import numpy as np
 
 

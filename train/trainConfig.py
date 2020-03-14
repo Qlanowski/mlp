@@ -1,7 +1,7 @@
 import random
-from train.relu import ReLU
-from train.sigmoid import Sigmoid
-from train.tanh import Tanh
+from train.functions.relu import ReLU
+from train.functions.sigmoid import Sigmoid
+from train.functions.tanh import Tanh
 
 
 class TrainConfig:

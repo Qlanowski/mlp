@@ -9,15 +9,18 @@ class MLP:
         self.is_bias = is_bias
         self.activation_function = activation_function
 
+    def train(self, x, y):
+        self.__init_weights()
+
     def predict(self, data):
-        result = data.copy().to_numpy()
+        result = data.copy().transpose().to_numpy()
         if self.biases:
             for w, b in zip(self.weights, self.biases):
                 result = self.activation_function.function(np.dot(w, result) + b)
         else:
             for w in self.weights:
                 result = self.activation_function.function(np.dot(w, result))
-        return pd.DataFrame(result)
+        return pd.DataFrame(result.transpose())
 
     def __init_weights(self, seed=None):
         np.random.seed(seed)

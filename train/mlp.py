@@ -5,7 +5,7 @@ import pandas as pd
 class MLP:
 
     def __init__(self, network_size, is_bias, activation_function):
-        self.network_size = network_size
+        self.network_size = np.array(network_size)
         self.is_bias = is_bias
         self.activation_function = activation_function
 
@@ -35,7 +35,8 @@ class MLP:
             for x, y
             in zip(self.network_size[:-1], self.network_size[1:])
         ])
-        self.biases = None if not self.is_bias else np.random.randn(len(self.network_size) - 1)
+        if self.is_bias:
+            self.biases = np.random.randn(len(self.network_size) - 1)
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
         pass

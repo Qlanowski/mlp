@@ -32,21 +32,19 @@ class MLP:
             in zip(self.network_size[:-1], self.network_size[1:])
         ])
         b_count = len(self.network_size) - 1
-        self.biases = np.random.randn(b_count) if self.biases else np.zeros(b_count)
+        self.biases = np.random.randn(b_count) if self.is_bias else np.zeros(b_count)
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
         nablas = self.back_propagation(x_batch, y_batch)
         if self.is_bias:
             nabla_w, nabla_b = nablas
-            nabla_b = np.average(nabla_b)
             self.biases = self.biases - nabla_b * learning_rate
         else:
             nabla_w = nablas
-        nabla_w = np.average(nabla_w)
         self.weights = self.weights - nabla_w * learning_rate
 
     def __calculate_values_on_neutrons(self, x):
-        a_array = [x]
+        a_array = [x.transpose()]
         z_array = []
         for w, b in zip(self.weights, self.biases):
             z_array.append(np.dot(w, a_array[-1]) + b)
@@ -54,7 +52,7 @@ class MLP:
         return np.array(z_array), np.array(a_array)
 
     def __calculate_cost_derivative_on_last_layer(self, z_array, a_array, y):
-        delta = 2 * (a_array[-1] - y) * self.activation_function.derivative(z_array[-1])
+        delta = 2 * (a_array[-1] - y.transpose()) * self.activation_function.derivative(z_array[-1])
         nabla_w = np.dot(delta, a_array[-2].transpose())
         if self.is_bias:
             nabla_b = delta
@@ -95,7 +93,7 @@ class MLP:
 
     @staticmethod
     def __split_to_batches(x, y, batch_size):
-        return np.array([
+        return [
             (x[i: i + batch_size], y[i: i + batch_size])
-            for i in range(0, len(x), batch_size)
-        ])
+            for i in range(0, x.shape[0], batch_size)
+        ]

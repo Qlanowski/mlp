@@ -11,8 +11,10 @@ class MLP:
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum):
         self.__init_weights()
+        x_train = x.to_numpy()
+        y_train = y.to_numpy()
         for i in range(iterations):
-            batches = self.__split_to_batches(x, y, batch_size)
+            batches = self.__split_to_batches(x_train, y_train, batch_size)
             for x_batch, y_batch in batches:
                 self.__train_with_single_batch(x_batch, y_batch, learning_rate, momentum)
 
@@ -28,11 +30,11 @@ class MLP:
 
     def __init_weights(self, seed=None):
         np.random.seed(seed)
-        self.weights = [
+        self.weights = np.array([
             np.random.randn(y, x)
             for x, y
             in zip(self.network_size[:-1], self.network_size[1:])
-        ]
+        ])
         self.biases = None if not self.is_bias else np.random.randn(len(self.network_size) - 1)
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):

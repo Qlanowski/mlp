@@ -20,12 +20,8 @@ class MLP:
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
-        if self.is_bias:
-            for w, b in zip(self.weights, self.biases):
-                result = self.activation_function.function(np.dot(w, result) + b)
-        else:
-            for w in self.weights:
-                result = self.activation_function.function(np.dot(w, result))
+        for w, b in zip(self.weights, self.biases):
+            result = self.activation_function.function(np.dot(w, result) + b)
         return pd.DataFrame(result.transpose())
 
     def __init_weights(self, seed=None):

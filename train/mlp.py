@@ -45,10 +45,9 @@ class MLP:
             a_array.append(self.activation_function.function(z_array[-1]))
         return np.array(z_array), np.array(a_array)
 
-
     @staticmethod
     def __split_to_batches(x, y, batch_size):
-        return [
+        return np.array([
             (x[i: i + batch_size], y[i: i + batch_size])
             for i in range(0, len(x), batch_size)
-        ]
+        ])

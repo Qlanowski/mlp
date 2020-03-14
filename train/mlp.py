@@ -18,7 +18,7 @@ class MLP:
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
-        if self.biases:
+        if self.is_bias:
             for w, b in zip(self.weights, self.biases):
                 result = self.activation_function.function(np.dot(w, result) + b)
         else:
@@ -33,11 +33,7 @@ class MLP:
             for x, y
             in zip(self.network_size[:-1], self.network_size[1:])
         ]
-        self.biases = None if not self.is_bias else [
-            np.random.randn(y, 1)
-            for y
-            in self.network_size[1:]
-        ]
+        self.biases = None if not self.is_bias else np.random.randn(len(self.network_size) - 1)
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
         pass

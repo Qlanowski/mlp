@@ -35,7 +35,15 @@ class MLP:
         self.biases = np.random.randn(b_count) if self.biases else np.zeros(b_count)
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
-        pass
+        nablas = self.back_propagation(x_batch, y_batch)
+        if self.is_bias:
+            nabla_w, nabla_b = nablas
+            nabla_b = np.average(nabla_b)
+            self.biases = self.biases - nabla_b * learning_rate
+        else:
+            nabla_w = nablas
+        nabla_w = np.average(nabla_w)
+        self.weights = self.weights - nabla_w * learning_rate
 
     def __calculate_values_on_neutrons(self, x):
         a_array = [x]

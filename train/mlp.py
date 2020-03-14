@@ -35,8 +35,8 @@ class MLP:
             for x, y
             in zip(self.network_size[:-1], self.network_size[1:])
         ])
-        if self.is_bias:
-            self.biases = np.random.randn(len(self.network_size) - 1)
+        b_count = len(self.network_size) - 1
+        self.biases = np.random.randn(b_count) if self.biases else np.zeros(b_count)
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
         pass

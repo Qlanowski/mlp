@@ -9,7 +9,17 @@ class MLP:
         self.is_bias = is_bias
         self.activation_function = activation_function
 
-    def __init_weights__(self, seed=None):
+    def predict(self, data):
+        result = data.copy().to_numpy()
+        if self.biases:
+            for w, b in zip(self.weights, self.biases):
+                result = self.activation_function.function(np.dot(w, result) + b)
+        else:
+            for w in self.weights:
+                result = self.activation_function.function(np.dot(w, result))
+        return pd.DataFrame(result)
+
+    def __init_weights(self, seed=None):
         np.random.seed(seed)
         self.weights = [
             np.random.randn(y, x)
@@ -21,4 +31,3 @@ class MLP:
             for y
             in self.network_size[1:]
         ]
-

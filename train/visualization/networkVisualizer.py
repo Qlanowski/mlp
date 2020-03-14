@@ -11,10 +11,10 @@ class NetworkVisualizer(Visualizer):
         self.layers = layers
         self.bias = bias
         self.layer_neurons = []
-        self.fig = pyplot.figure()
+        pyplot.figure()
 
-    def update(self, weights):
-        self.fig.clf()
+    def update(self, weights, biases):
+        pyplot.gcf().clear()
         distance_between_layers = 40
         distance_between_neurons = 20
         neuron_radius = 5
@@ -36,6 +36,20 @@ class NetworkVisualizer(Visualizer):
                 for parent_inx, weight in enumerate(incoming):
                     self.__line_between_two_neurons(neuron_radius, self.layer_neurons[layer_inx + 1][child_inx],
                                                     self.layer_neurons[layer_inx][parent_inx], self.__sigmoid(weight),
+                                                    weight > 0)
+
+        if self.bias:
+            bias_neurons = []
+            y = 0
+            for i in range(len(self.layers) - 1):
+                neuron = Neuron(-distance_between_neurons, y)
+                neuron.draw(neuron_radius)
+                bias_neurons.append(neuron)
+                y += distance_between_layers
+            for bias_inx, (bias_neuron, neurons_in_layer) in enumerate(zip(bias_neurons, self.layer_neurons[1:])):
+                for layer_neuron in neurons_in_layer:
+                    self.__line_between_two_neurons(neuron_radius, layer_neuron, bias_neuron,
+                                                    self.__sigmoid(biases[bias_inx]),
                                                     weight > 0)
 
         pyplot.axis('scaled')
@@ -79,5 +93,5 @@ if __name__ == "__main__":
     for i in range(100):
         weights = [np.random.randn(y, x)
                    for x, y in zip(sizes[:-1], sizes[1:])]
-        network.update(weights)
-
+        biases = np.random.rand(len(sizes[:-1]))
+        network.update(weights, biases)

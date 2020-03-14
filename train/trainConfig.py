@@ -1,7 +1,7 @@
 class TrainConfig:
 
     def __init__(self, layers, activation_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
-                 problem, input_file):
+                 problem, input_file, test_file):
         self.layers = layers
         self.activation_function = activation_function
         self.bias = bias
@@ -11,3 +11,4 @@ class TrainConfig:
         self.momentum = momentum
         self.problem = problem
         self.input_file = input_file
+        self.test_file = test_file

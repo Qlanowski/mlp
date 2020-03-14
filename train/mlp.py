@@ -9,7 +9,7 @@ class MLP:
         self.is_bias = is_bias
         self.activation_function = activation_function
 
-    def train(self, x, y):
+    def train(self, x, y, iterations, batch_size, learning_rate, momentum):
         self.__init_weights()
 
     def predict(self, data):

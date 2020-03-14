@@ -34,3 +34,10 @@ class MLP:
             for y
             in self.network_size[1:]
         ]
+
+    @staticmethod
+    def __split_to_batches(x, y, batch_size):
+        return [
+            (x[i: i + batch_size], y[i: i + batch_size])
+            for i in range(0, len(x), batch_size)
+        ]

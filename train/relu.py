@@ -6,8 +6,8 @@ class ReLU(ActivationFunction):
     def __init__(self):
         pass
 
-    def function(self, z):
-        return np.maximum(0, z)
+    def function(self, x):
+        return np.maximum(0, x)
 
-    def derivative(self, z):
-        return (z > 0) * 1.
+    def derivative(self, x):
+        return (x > 0) * 1.

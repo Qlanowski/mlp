@@ -53,7 +53,7 @@ class MLP:
             return delta, nabla_w, nabla_b
         return delta, nabla_w
 
-    def calculate_cost_derivative_on_prev_layer(self, z, a, weights, next_delta):
+    def __calculate_cost_derivative_on_prev_layer(self, z, a, weights, next_delta):
         delta = np.dot(weights.transpose(), next_delta) * self.activation_function.derivative(z)
         nabla_w = np.dot(delta, a.transpose())
         if self.is_bias:

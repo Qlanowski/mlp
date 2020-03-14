@@ -45,6 +45,14 @@ class MLP:
             a_array.append(self.activation_function.function(z_array[-1]))
         return np.array(z_array), np.array(a_array)
 
+    def __calculate_cost_derivative_on_last_layer(self, z_array, a_array, y):
+        delta = 2 * (a_array[-1] - y) * self.activation_function.derivative(z_array[-1])
+        nabla_w = np.dot(delta, a_array[-2].transpose())
+        if self.is_bias:
+            nabla_b = delta
+            return nabla_w, nabla_b
+        return nabla_w
+
     @staticmethod
     def __split_to_batches(x, y, batch_size):
         return np.array([

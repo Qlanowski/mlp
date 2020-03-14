@@ -17,11 +17,12 @@ def main(argv):
                '-r <learning_rate> ' \
                '-m <momentum> -p <0 - cls | 1 - reg> ' \
                '-i <input_file>' \
-               '-t <test_input_file'
+               '-t <test_input_file' \
+               '-d seed -1 random'
     try:
-        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:",
+        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:d:",
                                    ["help", "layers=", "activation_function=", "bias=", "batch_size=",
-                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=", "test="])
+                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=", "test=", "seed="])
     except getopt.GetoptError:
         print(help_txt)
         sys.exit(2)
@@ -49,9 +50,11 @@ def main(argv):
             input_file = arg
         elif opt in ("-t", "--test"):
             test_file = arg
+        elif opt in ("-d", "--seed"):
+            seed = int(arg)
 
     return TrainConfig(layers, activation_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
-                       problem, input_file, test_file)
+                       problem, input_file, test_file, seed)
 
 
 if __name__ == "__main__":

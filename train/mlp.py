@@ -11,6 +11,10 @@ class MLP:
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum):
         self.__init_weights()
+        for i in range(iterations):
+            batches = self.__split_to_batches(x, y, batch_size)
+            for x_batch, y_batch in batches:
+                self.__train_with_single_batch(x_batch, y_batch, learning_rate, momentum)
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
@@ -34,6 +38,9 @@ class MLP:
             for y
             in self.network_size[1:]
         ]
+
+    def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
+        pass
 
     @staticmethod
     def __split_to_batches(x, y, batch_size):

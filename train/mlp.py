@@ -41,6 +41,20 @@ class MLP:
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
         pass
 
+    def __calculate_values_on_neutrons(self, x):
+        a_array = [x]
+        z_array = []
+        if self.is_bias:
+            for w, b in zip(self.weights, self.biases):
+                z_array.append(np.dot(w, a_array[-1]) + b)
+                a_array.append(self.activation_function.function(z_array[-1]))
+        else:
+            for w in self.weights:
+                z_array.append(np.dot(w, a_array[-1]))
+                a_array.append(self.activation_function.function(z_array[-1]))
+        return np.array(z_array), np.array(a_array)
+
+
     @staticmethod
     def __split_to_batches(x, y, batch_size):
         return [

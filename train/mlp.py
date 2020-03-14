@@ -50,16 +50,40 @@ class MLP:
         nabla_w = np.dot(delta, a_array[-2].transpose())
         if self.is_bias:
             nabla_b = delta
-            return nabla_w, nabla_b
-        return nabla_w
+            return delta, nabla_w, nabla_b
+        return delta, nabla_w
 
     def calculate_cost_derivative_on_prev_layer(self, z, a, weights, next_delta):
         delta = np.dot(weights.transpose(), next_delta) * self.activation_function.derivative(z)
         nabla_w = np.dot(delta, a.transpose())
         if self.is_bias:
             nabla_b = delta
-            return nabla_w, nabla_b
-        return  nabla_w
+            return delta, nabla_w, nabla_b
+        return delta, nabla_w
+
+    def back_propagation(self, x, y):
+        z_array, a_array = self.__calculate_values_on_neutrons(x)
+        nabla_w = []
+        nabla_b = []
+        delta, *nablas = self.__calculate_cost_derivative_on_last_layer(z_array, a_array, y)
+        nabla_w.append(nablas[0])
+        if self.is_bias:
+            nabla_b.append(nablas[1])
+        for i in range(2, len(self.network_size)):
+            delta, *nablas = self.__calculate_cost_derivative_on_prev_layer(
+                z_array[-i],
+                a_array[-i - 1],
+                self.weights[-i + 1],
+                delta
+            )
+            nabla_w.append(nablas[0])
+            if self.is_bias:
+                nabla_b.append(nablas[1])
+        nabla_w.reverse()
+        if self.is_bias:
+            nabla_b.reverse()
+            return np.array(nabla_w), np.array(nabla_b)
+        return np.array(nabla_w)
 
     @staticmethod
     def __split_to_batches(x, y, batch_size):

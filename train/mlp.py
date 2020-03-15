@@ -67,7 +67,7 @@ class MLP:
             return delta, nabla_w, nabla_b
         return delta, nabla_w
 
-    def back_propagation(self, x, y):
+    def __back_propagation(self, x, y):
         z_array, a_array = self.__calculate_values_on_neutrons(x)
         nabla_w = []
         nabla_b = []

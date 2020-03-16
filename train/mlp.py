@@ -84,7 +84,8 @@ class MLP:
             activations.append(f.function(layer_inputs[-1]))
         return layer_inputs, activations
 
-    def __get_cd_to_layer_input(self, cd_to_activation, layer_input, activation_function):
+    @staticmethod
+    def __get_cd_to_layer_input(cd_to_activation, layer_input, activation_function):
         return cd_to_activation * activation_function.derivative(layer_input)
 
     @staticmethod

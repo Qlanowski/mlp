@@ -15,9 +15,9 @@ class MLP:
         y_train = y.transpose().to_numpy()
         data = self.__transform_data_to_tuples(x_train, y_train)
         for i in range(iterations):
-            batches = self.__split_to_batches(x_train, y_train, batch_size)
-            for x_batch, y_batch in batches:
-                self.__train_with_single_batch(x_batch, y_batch, learning_rate, momentum)
+            batches = self.__split_to_batches(data, batch_size)
+            for batch in batches:
+                self.__train_with_single_batch(batch, learning_rate, momentum)
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()

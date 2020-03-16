@@ -2,8 +2,9 @@ import getopt
 import sys
 import pandas as pd
 import numpy as np
-
-from train.network import Network
+import train.parser as parser
+from train.functions.sigmoid import Sigmoid
+from train.mlp import MLP
 from train.trainConfig import TrainConfig
 
 
@@ -62,44 +63,29 @@ if __name__ == "__main__":
     config = main(sys.argv[1:])
     # load data
     df = pd.read_csv(config.input_file)
+    x = df.iloc[:, :-1]
+    y, classes = parser.split_y_classes(df.iloc[:, -1:])
+
     test_df = pd.read_csv(config.test_file)
+    x_test = df.iloc[:, :-1]
 
-    if not config.problem:
-        classes = np.sort(df.cls.unique())
-
-        train_tuples = [
-            (np.array(x[:-1]).reshape(-1, 1),
-             np.array([int(x[-1] == i) for i in classes]).reshape(-1, 1))
-            for x in df.to_numpy()]
-
-        test_tuples = [
-            (np.array(x[:-1]).reshape(-1, 1),
-             np.array([int(x[-1] == i) for i in classes]).reshape(-1, 1))
-            for x in test_df.to_numpy()]
-
-    else:
-        train_tuples = [
-            (np.array([x[:-1]]).reshape(-1, 1),
-             np.array([x[-1]]).reshape(-1, 1))
-            for x in df.to_numpy()]
-
-        test_tuples = [
-            (np.array([x[:-1]]).reshape(-1, 1),
-             np.array([x[-1]]).reshape(-1, 1))
-            for x in test_df.to_numpy()]
-
-    # initialize trainer
-    net = Network(config.layers)
     # train
-    net.SGD(
-        training_data=train_tuples,
-        epochs=config.number_of_iterations // config.batch_size,
-        mini_batch_size=config.batch_size,
-        eta=config.learning_rate
+    mlp = MLP(
+        network_size=config.layers,
+        is_bias=config.bias,
+        activation_function=Sigmoid()
     )
 
-    print(net.evaluate(train_tuples))
-    print(net.weights)
-    print(net.biases)
+    mlp.train(
+        x,
+        y,
+        iterations= config.number_of_iterations // config.batch_size,
+        batch_size=config.batch_size,
+        learning_rate=config.learning_rate,
+        momentum=config.momentum
+    )
+
+    y_result = parser.merge_y_classes(mlp.predict(x_test), classes)
+    print(y_result)
 
     # save net

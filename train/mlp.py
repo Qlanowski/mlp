@@ -46,20 +46,22 @@ class MLP:
 
     def __get_values_on_layers(self, x):
         activations = [x]
-        inputs = []
+        neuron_inputs = []
         for w, b in zip(self.weights, self.biases):
-            inputs.append(np.dot(w, activations[-1]) + b)
-            activations.append(self.activation_function.function(inputs[-1]))
-        return inputs, activations
+            neuron_inputs.append(np.dot(w, activations[-1]) + b)
+            activations.append(self.activation_function.function(neuron_inputs[-1]))
+        return neuron_inputs, activations
 
-    def __get_cd_to_last_input(self, inputs, activations, y):
+    def __get_cd_to_last_neuron_input(self, neuron_inputs, activations, y):
         return self.__get_cd_to_last_activation(activations[-1], y) \
-                      * self.activation_function.derivative(inputs[-1])
+                      * self.activation_function.derivative(neuron_inputs[-1])
 
-    def __get_cd_to_last_weights_and_bias(self, activation, cd_to_input):
-        cd_to_weights = np.dot(cd_to_input * activation.transpose())
-        cd_to_bias = np.sum(cd_to_input) if self.is_bias else 0
-        return cd_to_weights, cd_to_bias
+    def __get_cd_to_neuron_input(self, cd_to_activation, neuron_input):
+        return cd_to_activation * self.activation_function.derivative(neuron_input)
+
+    @staticmethod
+    def __get_cd_to_weights(activation, cd_to_neuron_input):
+        return np.dot(cd_to_neuron_input, activation.transpose())
 
     def __calculate_cost_derivative_on_last_layer(self, inputs, activations, y):
         delta = 2 * (a_array[-1] - y.transpose()) * self.activation_function.derivative(z_array[-1])

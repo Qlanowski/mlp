@@ -62,6 +62,10 @@ class MLP:
     def __get_cd_to_bias(self, cd_to_layer_input):
         return np.sum(cd_to_layer_input) if self.is_bias else 0
 
+    @staticmethod
+    def __get_cd_to_activation(self, weights, cd_to_layer_input):
+        return np.dot(weights.transpose(), cd_to_layer_input)
+
     def __calculate_cost_derivative_on_last_layer(self, layer_inputs, activations, y):
         delta = 2 * (a_array[-1] - y.transpose()) * self.activation_function.derivative(z_array[-1])
         nabla_w = np.dot(delta, a_array[-2].transpose())

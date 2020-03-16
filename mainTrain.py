@@ -68,7 +68,10 @@ if __name__ == "__main__":
     # load data
     df = pd.read_csv(config.input_file)
     x = df.iloc[:, :-1]
-    y, classes = parser.split_y_classes(df.iloc[:, -1:])
+    y = df.iloc[:, -1:]
+
+    if config.problem == 0:
+        y, classes = parser.split_y_classes(y)
 
     test_df = pd.read_csv(config.test_file)
     x_test = df.iloc[:, :-1]
@@ -98,7 +101,9 @@ if __name__ == "__main__":
         momentum=config.momentum
     )
 
-    y_result = parser.merge_y_classes(mlp.predict(x_test), classes)
+    y_result = mlp.predict(x_test)
+    if config.problem == 0:
+        y_result = parser.merge_y_classes(y_result, classes)
     print(y_result)
 
     # save net

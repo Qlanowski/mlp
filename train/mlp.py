@@ -46,24 +46,27 @@ class MLP:
 
     def __get_values_on_layers(self, x):
         activations = [x]
-        neuron_inputs = []
+        layer_inputs = []
         for w, b in zip(self.weights, self.biases):
-            neuron_inputs.append(np.dot(w, activations[-1]) + b)
-            activations.append(self.activation_function.function(neuron_inputs[-1]))
-        return neuron_inputs, activations
+            layer_inputs.append(np.dot(w, activations[-1]) + b)
+            activations.append(self.activation_function.function(layer_inputs[-1]))
+        return layer_inputs, activations
 
-    def __get_cd_to_last_neuron_input(self, neuron_inputs, activations, y):
+    def __get_cd_to_last_layer_input(self, layer_inputs, activations, y):
         return self.__get_cd_to_last_activation(activations[-1], y) \
-                      * self.activation_function.derivative(neuron_inputs[-1])
+                      * self.activation_function.derivative(layer_inputs[-1])
 
-    def __get_cd_to_neuron_input(self, cd_to_activation, neuron_input):
-        return cd_to_activation * self.activation_function.derivative(neuron_input)
+    def __get_cd_to_layer_input(self, cd_to_activation, layer_input):
+        return cd_to_activation * self.activation_function.derivative(layer_input)
 
     @staticmethod
-    def __get_cd_to_weights(activation, cd_to_neuron_input):
-        return np.dot(cd_to_neuron_input, activation.transpose())
+    def __get_cd_to_weights(activation, cd_to_layer_input):
+        return np.dot(cd_to_layer_input, activation.transpose())
 
-    def __calculate_cost_derivative_on_last_layer(self, inputs, activations, y):
+    def __get_cd_to_bias(self, cd_to_layer_input):
+        return np.sum(cd_to_layer_input) if self.is_bias else 0
+
+    def __calculate_cost_derivative_on_last_layer(self, layer_inputs, activations, y):
         delta = 2 * (a_array[-1] - y.transpose()) * self.activation_function.derivative(z_array[-1])
         nabla_w = np.dot(delta, a_array[-2].transpose())
         if self.is_bias:

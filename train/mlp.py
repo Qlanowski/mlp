@@ -36,7 +36,27 @@ class MLP:
         self.biases = list(np.random.randn(b_count) if self.is_bias else np.zeros(b_count))
 
     def __train_with_single_batch(self, batch, learning_rate, momentum):
-        pass
+        cd_to_weights_sum = [np.zeros(w.shape) for w in self.weights]
+        cd_to_bias_sum = list(np.zeros(len(self.biases)))
+        for x, y in batch:
+            cd_to_weights_list, cd_to_bias_list = self.__get_back_propagation(x, y)
+            cd_to_weights_sum = [
+                w + w1
+                for w, w1 in zip(cd_to_weights_sum, cd_to_weights_list)
+            ]
+            cd_to_bias_sum = [
+                b + b1
+                for b, b1 in zip(cd_to_bias_sum, cd_to_bias_list)
+            ]
+        batch_len = len(batch)
+        self.weights = [
+            w - cd_w / batch_len * learning_rate
+            for w, cd_w in zip(self.weights, cd_to_weights_sum)
+        ]
+        self.biases = [
+            b - cd_b / batch_len * learning_rate
+            for b, cd_b in zip(self.biases, cd_to_bias_sum)
+        ]
 
     def __get_back_propagation(self, x, y):
         layer_inputs, activations = self.__get_values_on_layers(x)

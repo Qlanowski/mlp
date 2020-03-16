@@ -38,7 +38,7 @@ class MLP:
     def __train_with_single_batch(self, batch, learning_rate, momentum):
         pass
 
-    def __back_propagation(self, x, y):
+    def __get_back_propagation(self, x, y):
         layer_inputs, activations = self.__get_values_on_layers(x)
         cd_to_activation = self.__get_cd_to_last_activation(activations[-1], y)
         cd_to_weights_list = [np.zeros(w.shape) for w in self.weights]

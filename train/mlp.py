@@ -16,8 +16,15 @@ class MLP:
         data = self.__transform_data_to_tuples(x_train, y_train)
         for i in range(iterations):
             batches = self.__split_to_batches(data, batch_size)
+            old_w_change = [np.zeros(w.shape) for w in self.weights]
+            old_b_change = np.zeros(len(self.biases))
             for batch in batches:
-                self.__train_with_single_batch(batch, learning_rate, momentum)
+                old_w_change, old_w_change = self.__train_with_single_batch(
+                    batch,
+                    learning_rate,
+                    momentum,
+                    old_w_change,
+                    old_b_change)
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
@@ -35,7 +42,7 @@ class MLP:
         b_count = len(self.network_size) - 1
         self.biases = list(np.random.randn(b_count) if self.is_bias else np.zeros(b_count))
 
-    def __train_with_single_batch(self, batch, learning_rate, momentum):
+    def __train_with_single_batch(self, batch, learning_rate, momentum, old_w_change, old_b_change):
         cd_to_weights_sum = [np.zeros(w.shape) for w in self.weights]
         cd_to_bias_sum = list(np.zeros(len(self.biases)))
         for x, y in batch:
@@ -49,14 +56,21 @@ class MLP:
                 for b, b1 in zip(cd_to_bias_sum, cd_to_bias_list)
             ]
         batch_len = len(batch)
+        weights_change = [
+            w / batch_len * learning_rate + momentum * dw
+            for w, dw in zip(cd_to_weights_sum, old_w_change)]
+        bias_change = [
+            b / batch_len * learning_rate + momentum * db
+            for b, db in zip(cd_to_bias_sum, old_b_change)]
         self.weights = [
-            w - cd_w / batch_len * learning_rate
-            for w, cd_w in zip(self.weights, cd_to_weights_sum)
+            w - dw
+            for w, dw in zip(self.weights, weights_change)
         ]
         self.biases = [
-            b - cd_b / batch_len * learning_rate
-            for b, cd_b in zip(self.biases, cd_to_bias_sum)
+            b - db
+            for b, db in zip(self.biases, bias_change)
         ]
+        return weights_change, bias_change
 
     def __get_back_propagation(self, x, y):
         layer_inputs, activations = self.__get_values_on_layers(x)

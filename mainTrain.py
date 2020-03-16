@@ -84,7 +84,7 @@ if __name__ == "__main__":
     mlp = MLP(
         network_size=config.layers,
         is_bias=config.bias,
-        activation_function=activation_functions,
+        activation_functions=activation_functions,
         cost_function=QuadraticCostFunction(),
         visualizer=visualizer
     )

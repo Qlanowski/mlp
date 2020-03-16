@@ -13,6 +13,7 @@ class MLP:
         self.__init_weights()
         x_train = x.transpose().to_numpy()
         y_train = y.transpose().to_numpy()
+        data = self.__transform_data_to_tuples(x_train, y_train)
         for i in range(iterations):
             batches = self.__split_to_batches(x_train, y_train, batch_size)
             for x_batch, y_batch in batches:

@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 import numpy as np
 import train.parser as parser
+from train.functions.identity import Identity
 from train.functions.sigmoid import Sigmoid
 from train.mlp import MLP
 from train.trainConfig import TrainConfig
@@ -25,7 +26,8 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:d:",
                                    ["help", "layers=", "activation_function=", "bias=", "batch_size=",
-                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=", "test=", "seed="])
+                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=",
+                                    "test=", "seed="])
     except getopt.GetoptError:
         print(help_txt)
         sys.exit(2)
@@ -71,12 +73,18 @@ if __name__ == "__main__":
     test_df = pd.read_csv(config.test_file)
     x_test = df.iloc[:, :-1]
 
-    visualizer = NetworkVisualizer(config.layers,True)
+    visualizer = NetworkVisualizer(config.layers, True)
+
+    if config.problem == 1:
+        activation_functions = [config.activation_function]*(len(config.layers)-1) + [Identity()]
+    else:
+        activation_functions = [config.activation_function] * len(config.layers)
+
     # train
     mlp = MLP(
         network_size=config.layers,
         is_bias=config.bias,
-        activation_function=Sigmoid(),
+        activation_function=activation_functions,
         cost_function=QuadraticCostFunction(),
         visualizer=visualizer
     )
@@ -84,7 +92,7 @@ if __name__ == "__main__":
     mlp.train(
         x,
         y,
-        iterations= config.number_of_iterations // config.batch_size,
+        iterations=config.number_of_iterations // config.batch_size,
         batch_size=config.batch_size,
         learning_rate=config.learning_rate,
         momentum=config.momentum

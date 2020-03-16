@@ -1,4 +1,6 @@
 import random
+
+from train.functions.identity import Identity
 from train.functions.relu import ReLU
 from train.functions.sigmoid import Sigmoid
 from train.functions.tanh import Tanh
@@ -16,6 +18,8 @@ class TrainConfig:
             self.activation_function = Sigmoid()
         elif activation_function == 2:
             self.activation_function = Tanh()
+        elif activation_function == 3:
+            self.activation_function = Identity()
 
         self.bias = bias == 1
         self.batch_size = batch_size

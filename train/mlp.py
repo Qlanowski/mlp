@@ -29,6 +29,7 @@ class MLP:
                     old_b_change)
                 if self.visualizer:
                     self.visualizer.update(self.weights, self.biases)
+            print("iteration " + str(i+1) + " of " + str(iterations))
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()

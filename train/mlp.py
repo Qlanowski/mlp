@@ -43,13 +43,13 @@ class MLP:
             nabla_w = nablas
         self.weights = self.weights - nabla_w * learning_rate
 
-    def __calculate_values_on_neutrons(self, x):
-        a_array = [x.transpose()]
-        z_array = []
+    def __calculate_values_on_layers(self, x):
+        activations = [x]
+        inputs = []
         for w, b in zip(self.weights, self.biases):
-            z_array.append(np.dot(w, a_array[-1]) + b)
-            a_array.append(self.activation_function.function(z_array[-1]))
-        return np.array(z_array), np.array(a_array)
+            inputs.append(np.dot(w, activations[-1]) + b)
+            activations.append(self.activation_function.function(inputs[-1]))
+        return inputs, activations
 
     def __calculate_cost_derivative_on_last_layer(self, z_array, a_array, y):
         delta = 2 * (a_array[-1] - y.transpose()) * self.activation_function.derivative(z_array[-1])

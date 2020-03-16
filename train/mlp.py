@@ -20,7 +20,7 @@ class MLP:
             old_w_change = [np.zeros(w.shape) for w in self.weights]
             old_b_change = np.zeros(len(self.biases))
             for batch in batches:
-                old_w_change, old_w_change = self.__train_with_single_batch(
+                old_w_change, old_b_change = self.__train_with_single_batch(
                     batch,
                     learning_rate,
                     momentum,
@@ -58,12 +58,8 @@ class MLP:
                 for b, b1 in zip(cd_to_bias_sum, cd_to_bias_list)
             ]
         batch_len = len(batch)
-        weights_change = [
-            w / batch_len * learning_rate + momentum * dw
-            for w, dw in zip(cd_to_weights_sum, old_w_change)]
-        bias_change = [
-            b / batch_len * learning_rate + momentum * db
-            for b, db in zip(cd_to_bias_sum, old_b_change)]
+        weights_change = self.__get_weights_change(cd_to_weights_sum, batch_len, old_w_change, learning_rate, momentum)
+        bias_change = self.__get_weights_change(cd_to_bias_sum, batch_len, old_b_change, learning_rate, momentum)
         self.weights = [
             w - dw
             for w, dw in zip(self.weights, weights_change)
@@ -96,6 +92,13 @@ class MLP:
 
     def __get_cd_to_layer_input(self, cd_to_activation, layer_input):
         return cd_to_activation * self.activation_function.derivative(layer_input)
+
+    @staticmethod
+    def __get_weights_change(cd_to_weights_sum, count, old_weights_change, learning_rate, momentum):
+        return [
+            w / count * learning_rate + momentum * dw
+            for w, dw in zip(cd_to_weights_sum, old_weights_change)
+        ]
 
     @staticmethod
     def __get_cd_to_weights(activation, cd_to_layer_input):

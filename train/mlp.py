@@ -11,8 +11,8 @@ class MLP:
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum):
         self.__init_weights()
-        x_train = x.to_numpy()
-        y_train = y.to_numpy()
+        x_train = x.transpose().to_numpy()
+        y_train = y.transpose().to_numpy()
         for i in range(iterations):
             batches = self.__split_to_batches(x_train, y_train, batch_size)
             for x_batch, y_batch in batches:
@@ -93,7 +93,12 @@ class MLP:
 
     @staticmethod
     def __split_to_batches(x, y, batch_size):
-        return [
-            (x[i: i + batch_size], y[i: i + batch_size])
-            for i in range(0, x.shape[0], batch_size)
-        ]
+        n = x.shape[1]
+        batch_count = n // batch_size
+        rest = n % batch_size
+        x_batches = list(np.hsplit(x[:, np.r_[:n - rest]], batch_count))
+        y_batches = list(np.hsplit(y[:, np.r_[:n - rest]], batch_count))
+        if rest > 0:
+            x_batches.append(x[:, np.r_[n - rest:n]])
+            y_batches.append(y[:, np.r_[n - rest:n]])
+        return list(zip(x_batches, y_batches))

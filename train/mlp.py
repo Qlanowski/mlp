@@ -52,10 +52,6 @@ class MLP:
             activations.append(self.activation_function.function(layer_inputs[-1]))
         return layer_inputs, activations
 
-    def __get_cd_to_last_layer_input(self, layer_inputs, activations, y):
-        return self.__get_cd_to_last_activation(activations[-1], y) \
-                      * self.activation_function.derivative(layer_inputs[-1])
-
     def __get_cd_to_layer_input(self, cd_to_activation, layer_input):
         return cd_to_activation * self.activation_function.derivative(layer_input)
 

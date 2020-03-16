@@ -7,6 +7,7 @@ from train.functions.sigmoid import Sigmoid
 from train.mlp import MLP
 from train.trainConfig import TrainConfig
 from train.visualization.networkVisualizer import NetworkVisualizer
+from train.cost_functions import QuadraticCostFunction
 
 
 def main(argv):
@@ -76,6 +77,7 @@ if __name__ == "__main__":
         network_size=config.layers,
         is_bias=config.bias,
         activation_function=Sigmoid(),
+        cost_function=QuadraticCostFunction(),
         visualizer=visualizer
     )
 

@@ -44,7 +44,7 @@ class MLP:
             nabla_w = nablas
         self.weights = self.weights - nabla_w * learning_rate
 
-    def __calculate_values_on_layers(self, x):
+    def __get_values_on_layers(self, x):
         activations = [x]
         inputs = []
         for w, b in zip(self.weights, self.biases):

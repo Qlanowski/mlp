@@ -75,6 +75,7 @@ if __name__ == "__main__":
 
     test_df = pd.read_csv(config.test_file)
     x_test = df.iloc[:, :-1]
+    y_test = df.iloc[:, -1:]
 
     visualizer = NetworkVisualizer(config.layers, True)
 
@@ -89,7 +90,7 @@ if __name__ == "__main__":
         is_bias=config.bias,
         activation_functions=activation_functions,
         cost_function=QuadraticCostFunction(),
-        visualizer=visualizer
+        visualizer=None
     )
 
     mlp.train(
@@ -104,6 +105,8 @@ if __name__ == "__main__":
     y_result = mlp.predict(x_test)
     if config.problem == 0:
         y_result = parser.merge_y_classes(y_result, classes)
+
     print(y_result)
+    print(mlp.cost_function.function(y_result, y_test))
 
     # save net

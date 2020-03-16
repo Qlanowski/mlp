@@ -51,10 +51,12 @@ class MLP:
             activations.append(self.activation_function.function(inputs[-1]))
         return inputs, activations
 
-    def __get_cd_to_last_weights_and_bias(self, inputs, activations, y):
-        cd_to_input = self.__get_cd_to_last_activation(activations[-1], y) \
+    def __get_cd_to_last_input(self, inputs, activations, y):
+        return self.__get_cd_to_last_activation(activations[-1], y) \
                       * self.activation_function.derivative(inputs[-1])
-        cd_to_weights = np.dot(cd_to_input * activations[-2].transpose())
+
+    def __get_cd_to_last_weights_and_bias(self, activation, cd_to_input):
+        cd_to_weights = np.dot(cd_to_input * activation.transpose())
         cd_to_bias = np.sum(cd_to_input) if self.is_bias else 0
         return cd_to_weights, cd_to_bias
 

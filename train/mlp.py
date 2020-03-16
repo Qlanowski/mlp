@@ -35,14 +35,20 @@ class MLP:
         b_count = len(self.network_size) - 1
         self.biases = list(np.random.randn(b_count) if self.is_bias else np.zeros(b_count))
 
-    def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
-        nablas = self.back_propagation(x_batch, y_batch)
-        if self.is_bias:
-            nabla_w, nabla_b = nablas
-            self.biases = self.biases - nabla_b * learning_rate
-        else:
-            nabla_w = nablas
-        self.weights = self.weights - nabla_w * learning_rate
+    def __train_with_single_batch(self, batch, learning_rate, momentum):
+        pass
+
+    def __back_propagation(self, x, y):
+        layer_inputs, activations = self.__get_values_on_layers(x)
+        cd_to_activation = self.__get_cd_to_last_activation(activations[-1], y)
+        cd_to_weights_list = [np.zeros(w.shape) for w in self.weights]
+        cd_to_bias_list = list(np.zeros(len(self.biases)))
+        for i in range(1, len(self.network_size)):
+            cd_to_layer_input = self.__get_cd_to_layer_input(cd_to_activation, layer_inputs[-i])
+            cd_to_weights_list[-i] = self.__get_cd_to_weights(activations[-i-1], cd_to_layer_input)
+            cd_to_bias_list[-i] = self.__get_cd_to_bias(cd_to_layer_input)
+            cd_to_activation = self.__get_cd_to_activation(self.weights[-i], cd_to_layer_input)
+        return cd_to_weights_list, cd_to_bias_list
 
     def __get_values_on_layers(self, x):
         activations = [x]
@@ -63,33 +69,8 @@ class MLP:
         return np.sum(cd_to_layer_input) if self.is_bias else 0
 
     @staticmethod
-    def __get_cd_to_activation(self, weights, cd_to_layer_input):
+    def __get_cd_to_activation(weights, cd_to_layer_input):
         return np.dot(weights.transpose(), cd_to_layer_input)
-
-
-    def __back_propagation(self, x, y):
-        z_array, a_array = self.__calculate_values_on_neutrons(x)
-        nabla_w = []
-        nabla_b = []
-        delta, *nablas = self.__calculate_cost_derivative_on_last_layer(z_array, a_array, y)
-        nabla_w.append(nablas[0])
-        if self.is_bias:
-            nabla_b.append(nablas[1])
-        for i in range(2, len(self.network_size)):
-            delta, *nablas = self.__calculate_cost_derivative_on_prev_layer(
-                z_array[-i],
-                a_array[-i - 1],
-                self.weights[-i + 1],
-                delta
-            )
-            nabla_w.append(nablas[0])
-            if self.is_bias:
-                nabla_b.append(nablas[1])
-        nabla_w.reverse()
-        if self.is_bias:
-            nabla_b.reverse()
-            return np.array(nabla_w), np.array(nabla_b)
-        return np.array(nabla_w)
 
     @staticmethod
     def __get_cd_to_last_activation(activation, y):

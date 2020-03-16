@@ -91,6 +91,15 @@ class MLP:
             return np.array(nabla_w), np.array(nabla_b)
         return np.array(nabla_w)
 
+    def __get_cost_derivative_with_respect_to_network_output(self, a, y):
+        return 2 * np.sum(a - y, axis=1)
+
+    @staticmethod
+    def __transform_data_to_tuples(x, y):
+        x_vectors = np.hsplit(x, 1)
+        y_vectors = np.hsplit(y, 1)
+        return list(zip(x_vectors, y_vectors))
+
     @staticmethod
     def __split_to_batches(x, y, batch_size):
         n = x.shape[1]

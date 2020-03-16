@@ -26,13 +26,13 @@ class MLP:
 
     def __init_weights(self, seed=None):
         np.random.seed(seed)
-        self.weights = np.array([
+        self.weights = [
             np.random.randn(y, x)
             for x, y
             in zip(self.network_size[:-1], self.network_size[1:])
-        ])
+        ]
         b_count = len(self.network_size) - 1
-        self.biases = np.random.randn(b_count) if self.is_bias else np.zeros(b_count)
+        self.biases = list(np.random.randn(b_count) if self.is_bias else np.zeros(b_count))
 
     def __train_with_single_batch(self, x_batch, y_batch, learning_rate, momentum):
         nablas = self.back_propagation(x_batch, y_batch)

@@ -76,15 +76,15 @@ if __name__ == "__main__":
     visualizer = NetworkVisualizer(config.layers, True)
 
     if config.problem == 1:
-        activation_functions = [config.activation_function]*(len(config.layers)-1) + [Identity()]
+        activation_functions = [config.activation_function]*(len(config.layers)-2) + [Identity()]
     else:
-        activation_functions = [config.activation_function] * len(config.layers)
+        activation_functions = [config.activation_function] * (len(config.layers)-1)
 
     # train
     mlp = MLP(
         network_size=config.layers,
         is_bias=config.bias,
-        activation_function=activation_functions,
+        activation_functions=activation_functions,
         cost_function=QuadraticCostFunction(),
         visualizer=visualizer
     )

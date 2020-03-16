@@ -50,25 +50,13 @@ class MLP:
         cd_to_bias_sum = list(np.zeros(len(self.biases)))
         for x, y in batch:
             cd_to_weights_list, cd_to_bias_list = self.__get_back_propagation(x, y)
-            cd_to_weights_sum = [
-                w + w1
-                for w, w1 in zip(cd_to_weights_sum, cd_to_weights_list)
-            ]
-            cd_to_bias_sum = [
-                b + b1
-                for b, b1 in zip(cd_to_bias_sum, cd_to_bias_list)
-            ]
+            cd_to_weights_sum = self.__add_to_weights(cd_to_weights_sum, cd_to_weights_list)
+            cd_to_bias_sum = self.__add_to_weights(cd_to_bias_sum, cd_to_bias_list)
         batch_len = len(batch)
         weights_change = self.__get_weights_change(cd_to_weights_sum, batch_len, old_w_change, learning_rate, momentum)
         bias_change = self.__get_weights_change(cd_to_bias_sum, batch_len, old_b_change, learning_rate, momentum)
-        self.weights = [
-            w - dw
-            for w, dw in zip(self.weights, weights_change)
-        ]
-        self.biases = [
-            b - db
-            for b, db in zip(self.biases, bias_change)
-        ]
+        self.weights = self.__subtract_from_weights(self.weights, weights_change)
+        self.biases = self.__subtract_from_weights(self.biases, bias_change)
         return weights_change, bias_change
 
     def __get_back_propagation(self, x, y):
@@ -93,6 +81,20 @@ class MLP:
 
     def __get_cd_to_layer_input(self, cd_to_activation, layer_input):
         return cd_to_activation * self.activation_function.derivative(layer_input)
+
+    @staticmethod
+    def __add_to_weights(weights1, weights2):
+        return [
+            w1 + w2
+            for w1, w2 in zip(weights1, weights2)
+        ]
+
+    @staticmethod
+    def __subtract_from_weights(weights1, weights2):
+        return [
+            w1 - w2
+            for w1, w2 in zip(weights1, weights2)
+        ]
 
     @staticmethod
     def __get_weights_change(cd_to_weights_sum, count, old_weights_change, learning_rate, momentum):

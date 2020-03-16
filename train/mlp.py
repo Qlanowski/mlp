@@ -102,13 +102,8 @@ class MLP:
         return list(zip(x_vectors, y_vectors))
 
     @staticmethod
-    def __split_to_batches(x, y, batch_size):
-        n = x.shape[1]
-        batch_count = n // batch_size
-        rest = n % batch_size
-        x_batches = list(np.hsplit(x[:, np.r_[:n - rest]], batch_count))
-        y_batches = list(np.hsplit(y[:, np.r_[:n - rest]], batch_count))
-        if rest > 0:
-            x_batches.append(x[:, np.r_[n - rest:n]])
-            y_batches.append(y[:, np.r_[n - rest:n]])
-        return list(zip(x_batches, y_batches))
+    def __split_to_batches(data, batch_size):
+        return [
+            data[i: i + batch_size]
+            for i in range(0, len(data), batch_size)
+        ]

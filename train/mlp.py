@@ -4,10 +4,11 @@ import pandas as pd
 
 class MLP:
 
-    def __init__(self, network_size, is_bias, activation_function, visualizer=None):
+    def __init__(self, network_size, is_bias, activation_function, cost_function, visualizer=None):
         self.network_size = np.array(network_size)
         self.is_bias = is_bias
         self.activation_function = activation_function
+        self.cost_function = cost_function
         self.visualizer = visualizer
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum, seed=None):
@@ -61,7 +62,7 @@ class MLP:
 
     def __get_back_propagation(self, x, y):
         layer_inputs, activations = self.__get_values_on_layers(x)
-        cd_to_activation = self.__get_cd_to_last_activation(activations[-1], y)
+        cd_to_activation = self.cost_function.derivative(activations[-1], y)
         cd_to_weights_list = [np.zeros(w.shape) for w in self.weights]
         cd_to_bias_list = list(np.zeros(len(self.biases)))
         for i in range(1, len(self.network_size)):
@@ -113,10 +114,6 @@ class MLP:
     @staticmethod
     def __get_cd_to_activation(weights, cd_to_layer_input):
         return np.dot(weights.transpose(), cd_to_layer_input)
-
-    @staticmethod
-    def __get_cd_to_last_activation(activation, y):
-        return 2 * (activation - y)
 
     @staticmethod
     def __transform_data_to_tuples(x, y):

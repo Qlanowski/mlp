@@ -66,21 +66,6 @@ class MLP:
     def __get_cd_to_activation(self, weights, cd_to_layer_input):
         return np.dot(weights.transpose(), cd_to_layer_input)
 
-    def __calculate_cost_derivative_on_last_layer(self, layer_inputs, activations, y):
-        delta = 2 * (a_array[-1] - y.transpose()) * self.activation_function.derivative(z_array[-1])
-        nabla_w = np.dot(delta, a_array[-2].transpose())
-        if self.is_bias:
-            nabla_b = delta
-            return delta, nabla_w, nabla_b
-        return delta, nabla_w
-
-    def __calculate_cost_derivative_on_prev_layer(self, z, a, weights, next_delta):
-        delta = np.dot(weights.transpose(), next_delta) * self.activation_function.derivative(z)
-        nabla_w = np.dot(delta, a.transpose())
-        if self.is_bias:
-            nabla_b = delta
-            return delta, nabla_w, nabla_b
-        return delta, nabla_w
 
     def __back_propagation(self, x, y):
         z_array, a_array = self.__calculate_values_on_neutrons(x)

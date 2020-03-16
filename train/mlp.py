@@ -96,8 +96,9 @@ class MLP:
 
     @staticmethod
     def __transform_data_to_tuples(x, y):
-        x_vectors = np.hsplit(x, 1)
-        y_vectors = np.hsplit(y, 1)
+        n = x.shape[1]
+        x_vectors = np.hsplit(x, n)
+        y_vectors = np.hsplit(y, n)
         return list(zip(x_vectors, y_vectors))
 
     @staticmethod

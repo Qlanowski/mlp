@@ -6,6 +6,7 @@ import train.parser as parser
 from train.functions.sigmoid import Sigmoid
 from train.mlp import MLP
 from train.trainConfig import TrainConfig
+from train.visualization.networkVisualizer import NetworkVisualizer
 
 
 def main(argv):
@@ -69,11 +70,13 @@ if __name__ == "__main__":
     test_df = pd.read_csv(config.test_file)
     x_test = df.iloc[:, :-1]
 
+    visualizer = NetworkVisualizer(config.layers,True)
     # train
     mlp = MLP(
         network_size=config.layers,
         is_bias=config.bias,
-        activation_function=Sigmoid()
+        activation_function=Sigmoid(),
+        visualizer=visualizer
     )
 
     mlp.train(

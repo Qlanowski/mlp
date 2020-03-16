@@ -35,7 +35,7 @@ class NetworkVisualizer(Visualizer):
             for child_inx, incoming in enumerate(w_matrix):
                 for parent_inx, weight in enumerate(incoming):
                     self.__line_between_two_neurons(neuron_radius, self.layer_neurons[layer_inx + 1][child_inx],
-                                                    self.layer_neurons[layer_inx][parent_inx], self.__sigmoid(weight),
+                                                    self.layer_neurons[layer_inx][parent_inx], self.__cast_to_color(weight),
                                                     weight > 0)
 
         if self.bias:
@@ -49,7 +49,7 @@ class NetworkVisualizer(Visualizer):
             for bias_inx, (bias_neuron, neurons_in_layer) in enumerate(zip(bias_neurons, self.layer_neurons[1:])):
                 for layer_neuron in neurons_in_layer:
                     self.__line_between_two_neurons(neuron_radius, layer_neuron, bias_neuron,
-                                                    self.__sigmoid(biases[bias_inx]),
+                                                    self.__cast_to_color(biases[bias_inx]),
                                                     weight > 0)
 
         pyplot.axis('scaled')
@@ -82,8 +82,8 @@ class NetworkVisualizer(Visualizer):
                              (neuron1.y - y_adjustment, neuron2.y + y_adjustment), color=col)
         pyplot.gca().add_line(line)
 
-    def __sigmoid(self, x):
-        return 1.0 / (1.0 + np.exp(-x))
+    def __cast_to_color(self, x):
+        return min(abs(x), 1)
 
 
 if __name__ == "__main__":

@@ -4,10 +4,11 @@ import pandas as pd
 
 class MLP:
 
-    def __init__(self, network_size, is_bias, activation_function):
+    def __init__(self, network_size, is_bias, activation_function, visualizer):
         self.network_size = np.array(network_size)
         self.is_bias = is_bias
         self.activation_function = activation_function
+        self.visualizer = visualizer
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum):
         self.__init_weights()
@@ -25,6 +26,7 @@ class MLP:
                     momentum,
                     old_w_change,
                     old_b_change)
+                self.visualizer.update(self.weights, self.biases)
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()

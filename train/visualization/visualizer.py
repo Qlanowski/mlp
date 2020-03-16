@@ -1,6 +1,6 @@
 class Visualizer:
-    def __init__(self, layers):
+    def __init__(self, layers, bias):
         pass
 
-    def update(self, weights):
+    def update(self, weights, biases):
         pass

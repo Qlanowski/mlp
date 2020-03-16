@@ -10,8 +10,8 @@ class MLP:
         self.activation_function = activation_function
         self.visualizer = visualizer
 
-    def train(self, x, y, iterations, batch_size, learning_rate, momentum):
-        self.__init_weights()
+    def train(self, x, y, iterations, batch_size, learning_rate, momentum, seed=None):
+        self.__init_weights(seed)
         x_train = x.transpose().to_numpy()
         y_train = y.transpose().to_numpy()
         data = self.__transform_data_to_tuples(x_train, y_train)
@@ -35,7 +35,7 @@ class MLP:
             result = self.activation_function.function(np.dot(w, result) + b)
         return pd.DataFrame(result.transpose())
 
-    def __init_weights(self, seed=None):
+    def __init_weights(self, seed):
         np.random.seed(seed)
         self.weights = [
             np.random.randn(y, x)

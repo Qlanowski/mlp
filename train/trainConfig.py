@@ -1,4 +1,7 @@
 import random
+
+from train.functions.identity import Identity
+from train.functions.logistic import Logistic
 from train.functions.relu import ReLU
 from train.functions.sigmoid import Sigmoid
 from train.functions.tanh import Tanh
@@ -10,7 +13,7 @@ class TrainConfig:
     seed_range = 1000
 
     def __init__(self, layers, activation_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
-                 problem, input_file, test_file, seed, viusalizer):
+                 problem, input_file, test_file, seed, visualizer):
         self.layers = layers
         if activation_function == 0:
             self.activation_function = ReLU()
@@ -18,6 +21,10 @@ class TrainConfig:
             self.activation_function = Sigmoid()
         elif activation_function == 2:
             self.activation_function = Tanh()
+        elif activation_function == 3:
+            self.activation_function = Logistic()
+        elif activation_function == 4:
+            self.activation_function = Identity()
 
         self.bias = bias == 1
         self.batch_size = batch_size
@@ -32,7 +39,7 @@ class TrainConfig:
         else:
             self.seed = seed
 
-        if int(viusalizer) == 1:
+        if int(visualizer) == 1:
             self.visualizer = NetworkVisualizer(self.layers, self.bias)
         else:
             self.visualizer = Visualizer(self.layers, self.bias)

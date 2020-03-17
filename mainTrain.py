@@ -23,9 +23,10 @@ def main(argv):
                '-t <test_input_file' \
                '-d seed -1 random'
     try:
-        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:d:",
+        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:d:v:",
                                    ["help", "layers=", "activation_function=", "bias=", "batch_size=",
-                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=", "test=", "seed="])
+                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=",
+                                    "test=", "seed=", "visualizer="])
     except getopt.GetoptError:
         print(help_txt)
         sys.exit(2)
@@ -55,9 +56,11 @@ def main(argv):
             test_file = arg
         elif opt in ("-d", "--seed"):
             seed = int(arg)
+        elif opt in ("-v", "--visualizer"):
+            visualizer = int(arg)
 
     return TrainConfig(layers, activation_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
-                       problem, input_file, test_file, seed)
+                       problem, input_file, test_file, seed, visualizer)
 
 
 if __name__ == "__main__":
@@ -71,20 +74,19 @@ if __name__ == "__main__":
     test_df = pd.read_csv(config.test_file)
     x_test = df.iloc[:, :-1]
 
-    visualizer = NetworkVisualizer(config.layers,True)
     # train
     mlp = MLP(
         network_size=config.layers,
         is_bias=config.bias,
-        activation_function=Sigmoid(),
+        activation_function=config.activation_function,
         cost_function=QuadraticCostFunction(),
-        visualizer=visualizer
+        visualizer=config.visualizer
     )
 
     mlp.train(
         x,
         y,
-        iterations= config.number_of_iterations // config.batch_size,
+        iterations=config.number_of_iterations // config.batch_size,
         batch_size=config.batch_size,
         learning_rate=config.learning_rate,
         momentum=config.momentum

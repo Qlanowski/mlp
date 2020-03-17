@@ -2,13 +2,15 @@ import random
 from train.functions.relu import ReLU
 from train.functions.sigmoid import Sigmoid
 from train.functions.tanh import Tanh
+from train.visualization.networkVisualizer import NetworkVisualizer
+from train.visualization.visualizer import Visualizer
 
 
 class TrainConfig:
     seed_range = 1000
 
     def __init__(self, layers, activation_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
-                 problem, input_file, test_file, seed):
+                 problem, input_file, test_file, seed, viusalizer):
         self.layers = layers
         if activation_function == 0:
             self.activation_function = ReLU()
@@ -29,3 +31,8 @@ class TrainConfig:
             self.seed = int(random.random() * self.seed_range)
         else:
             self.seed = seed
+
+        if int(viusalizer) == 1:
+            self.visualizer = NetworkVisualizer(self.layers, self.bias)
+        else:
+            self.visualizer = Visualizer(self.layers, self.bias)

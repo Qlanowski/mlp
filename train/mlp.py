@@ -4,7 +4,7 @@ import pandas as pd
 
 class MLP:
 
-    def __init__(self, network_size, is_bias, activation_function, cost_function, visualizer=None):
+    def __init__(self, network_size, is_bias, activation_function, cost_function, visualizer):
         self.network_size = np.array(network_size)
         self.is_bias = is_bias
         self.activation_function = activation_function
@@ -27,8 +27,8 @@ class MLP:
                     momentum,
                     old_w_change,
                     old_b_change)
-                if self.visualizer:
-                    self.visualizer.update(self.weights, self.biases)
+                self.visualizer.update(self.weights, self.biases)
+            print("iteration " + str(i+1) + " of " + str(iterations))
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
@@ -67,7 +67,7 @@ class MLP:
         cd_to_bias_list = list(np.zeros(len(self.biases)))
         for i in range(1, len(self.network_size)):
             cd_to_layer_input = self.__get_cd_to_layer_input(cd_to_activation, layer_inputs[-i])
-            cd_to_weights_list[-i] = self.__get_cd_to_weights(activations[-i-1], cd_to_layer_input)
+            cd_to_weights_list[-i] = self.__get_cd_to_weights(activations[-i - 1], cd_to_layer_input)
             cd_to_bias_list[-i] = self.__get_cd_to_bias(cd_to_layer_input)
             cd_to_activation = self.__get_cd_to_activation(self.weights[-i], cd_to_layer_input)
         return cd_to_weights_list, cd_to_bias_list

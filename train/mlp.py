@@ -4,10 +4,10 @@ import pandas as pd
 
 class MLP:
 
-    def __init__(self, network_size, is_bias, activation_function, cost_function, visualizer):
+    def __init__(self, network_size, is_bias, activation_function, cost_function, visualizer=None):
         self.network_size = np.array(network_size)
         self.is_bias = is_bias
-        self.activation_function = activation_function
+        self.activation_functions = activation_functions
         self.cost_function = cost_function
         self.visualizer = visualizer
 
@@ -32,8 +32,8 @@ class MLP:
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
-        for w, b in zip(self.weights, self.biases):
-            result = self.activation_function.function(np.dot(w, result) + b)
+        for w, b, f in zip(self.weights, self.biases, self.activation_functions):
+            result = f.function(np.dot(w, result) + b)
         return pd.DataFrame(result.transpose())
 
     def __init_weights(self, seed):
@@ -66,8 +66,12 @@ class MLP:
         cd_to_weights_list = [np.zeros(w.shape) for w in self.weights]
         cd_to_bias_list = list(np.zeros(len(self.biases)))
         for i in range(1, len(self.network_size)):
-            cd_to_layer_input = self.__get_cd_to_layer_input(cd_to_activation, layer_inputs[-i])
-            cd_to_weights_list[-i] = self.__get_cd_to_weights(activations[-i - 1], cd_to_layer_input)
+            cd_to_layer_input = self.__get_cd_to_layer_input(
+                cd_to_activation,
+                layer_inputs[-i],
+                self.activation_functions[-i]
+            )
+            cd_to_weights_list[-i] = self.__get_cd_to_weights(activations[-i-1], cd_to_layer_input)
             cd_to_bias_list[-i] = self.__get_cd_to_bias(cd_to_layer_input)
             cd_to_activation = self.__get_cd_to_activation(self.weights[-i], cd_to_layer_input)
         return cd_to_weights_list, cd_to_bias_list
@@ -75,13 +79,14 @@ class MLP:
     def __get_values_on_layers(self, x):
         activations = [x]
         layer_inputs = []
-        for w, b in zip(self.weights, self.biases):
+        for w, b, f in zip(self.weights, self.biases, self.activation_functions):
             layer_inputs.append(np.dot(w, activations[-1]) + b)
-            activations.append(self.activation_function.function(layer_inputs[-1]))
+            activations.append(f.function(layer_inputs[-1]))
         return layer_inputs, activations
 
-    def __get_cd_to_layer_input(self, cd_to_activation, layer_input):
-        return cd_to_activation * self.activation_function.derivative(layer_input)
+    @staticmethod
+    def __get_cd_to_layer_input(cd_to_activation, layer_input, activation_function):
+        return cd_to_activation * activation_function.derivative(layer_input)
 
     @staticmethod
     def __add_to_weights(weights1, weights2):

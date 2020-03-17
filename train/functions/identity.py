@@ -1,3 +1,4 @@
+import numpy as np
 from train.functions.activationFunction import ActivationFunction
 
 
@@ -9,4 +10,4 @@ class Identity(ActivationFunction):
         return x
 
     def derivative(self, x):
-        return 1.0
+        return np.ones(x.shape)

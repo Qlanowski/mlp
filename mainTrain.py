@@ -69,10 +69,21 @@ if __name__ == "__main__":
     # load data
     df = pd.read_csv(config.input_file)
     x = df.iloc[:, :-1]
-    y, classes = parser.split_y_classes(df.iloc[:, -1:])
+    y = df.iloc[:, -1:]
+
+    if config.problem == 0:
+        y, classes = parser.split_y_classes(y)
 
     test_df = pd.read_csv(config.test_file)
     x_test = df.iloc[:, :-1]
+    y_test = df.iloc[:, -1:]
+
+    visualizer = NetworkVisualizer(config.layers, True)
+
+    if config.problem == 1:
+        activation_functions = [config.activation_function]*(len(config.layers)-2) + [Identity()]
+    else:
+        activation_functions = [config.activation_function] * (len(config.layers)-1)
 
     # train
     mlp = MLP(
@@ -92,7 +103,12 @@ if __name__ == "__main__":
         momentum=config.momentum
     )
 
-    y_result = parser.merge_y_classes(mlp.predict(x_test), classes)
+    y_result = mlp.predict(x_test)
+    if config.problem == 0:
+        y_result = parser.merge_y_classes(y_result, classes)
+        print('accuracy:', get_classification_accuracy(y_result, y_test))
+
     print(y_result)
+    print('cost:', np.sum(mlp.cost_function.function(y_result.to_numpy(), y_test.to_numpy())))
 
     # save net

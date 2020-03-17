@@ -33,7 +33,6 @@ def get_single_classification_test_result(config):
     x, y = load_data(config.train_file)
     y, classes = pr.split_y_classes(y)
     layers = [len(x.columns)] + config.hidden_layers + [len(y.columns)]
-    print(layers)
     mlp = MLP(
         network_size=layers,
         is_bias=config.is_bias,

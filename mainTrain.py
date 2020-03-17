@@ -25,7 +25,7 @@ def main(argv):
                '-d seed -1 random' \
                '-v visualizer 1 or 0'
     try:
-        opts, args = getopt.getopt(argv, "h:f:b:s:n:r:m:p:i:t:d:v:",
+        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:d:v:",
                                    ["help", "layers=", "activation_function=", "bias=", "batch_size=",
                                     "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=",
                                     "test=", "seed=", "visualizer="])

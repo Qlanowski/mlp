@@ -3,11 +3,13 @@ import sys
 import pandas as pd
 import numpy as np
 import train.parser as parser
+from train.functions.identity import Identity
 from train.functions.sigmoid import Sigmoid
 from train.mlp import MLP
 from train.trainConfig import TrainConfig
 from train.visualization.networkVisualizer import NetworkVisualizer
 from train.cost_functions import QuadraticCostFunction
+from train.accuracy import get_classification_accuracy
 
 
 def main(argv):
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     mlp = MLP(
         network_size=config.layers,
         is_bias=config.bias,
-        activation_function=config.activation_function,
+        activation_functions=activation_functions,
         cost_function=QuadraticCostFunction(),
         visualizer=config.visualizer
     )

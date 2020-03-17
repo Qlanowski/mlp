@@ -4,7 +4,7 @@ import pandas as pd
 
 class MLP:
 
-    def __init__(self, network_size, is_bias, activation_function, cost_function, visualizer=None):
+    def __init__(self, network_size, is_bias, activation_functions, cost_function, visualizer=None):
         self.network_size = np.array(network_size)
         self.is_bias = is_bias
         self.activation_functions = activation_functions

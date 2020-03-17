@@ -5,6 +5,8 @@ from train.functions.logistic import Logistic
 from train.functions.relu import ReLU
 from train.functions.sigmoid import Sigmoid
 from train.functions.tanh import Tanh
+from train.visualization.networkVisualizer import NetworkVisualizer
+from train.visualization.visualizer import Visualizer
 
 
 class TrainConfig:

@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import train.parser as parser
 from train.functions.identity import Identity
-from train.functions.sigmoid import Sigmoid
 from train.mlp import MLP
 from train.trainConfig import TrainConfig
 from train.visualization.networkVisualizer import NetworkVisualizer
@@ -23,9 +22,10 @@ def main(argv):
                '-m <momentum> -p <0 - cls | 1 - reg> ' \
                '-i <input_file>' \
                '-t <test_input_file' \
-               '-d seed -1 random'
+               '-d seed -1 random' \
+               '-v visualizer 1 or 0'
     try:
-        opts, args = getopt.getopt(argv, "hl:f:b:s:n:r:m:p:i:t:d:v:",
+        opts, args = getopt.getopt(argv, "h:f:b:s:n:r:m:p:i:t:d:v:",
                                    ["help", "layers=", "activation_function=", "bias=", "batch_size=",
                                     "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=",
                                     "test=", "seed=", "visualizer="])

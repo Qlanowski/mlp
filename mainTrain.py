@@ -79,8 +79,8 @@ if __name__ == "__main__":
         y, classes = parser.split_y_classes(y)
 
     test_df = pd.read_csv(config.test_file)
-    x_test = df.iloc[:, :-1]
-    y_test = df.iloc[:, -1:]
+    x_test = test_df.iloc[:, :-1]
+    y_test = test_df.iloc[:, -1:]
 
     visualizer = NetworkVisualizer(config.layers, True)
 

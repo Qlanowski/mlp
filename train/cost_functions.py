@@ -10,7 +10,7 @@ class CostFunction:
 class QuadraticCostFunction(CostFunction):
 
     def function(self, activation, y):
-        return (activation - y) ** 2
+        return ((activation - y)/2) ** 2
 
     def derivative(self, activation, y):
-        return 2 * (activation - y)
+        return activation - y

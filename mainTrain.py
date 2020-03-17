@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import train.parser as parser
 from train.functions.identity import Identity
+from train.functions.sigmoid import Sigmoid
 from train.mlp import MLP
 from train.trainConfig import TrainConfig
 from train.visualization.networkVisualizer import NetworkVisualizer
@@ -70,6 +71,7 @@ if __name__ == "__main__":
     config = main(sys.argv[1:])
     # load data
     df = pd.read_csv(config.input_file)
+
     x = df.iloc[:, :-1]
     y = df.iloc[:, -1:]
 
@@ -83,9 +85,9 @@ if __name__ == "__main__":
     visualizer = NetworkVisualizer(config.layers, True)
 
     if config.problem == 1:
-        activation_functions = [config.activation_function]*(len(config.layers)-2) + [Identity()]
+        activation_functions = [config.activation_function] * (len(config.layers) - 2) + [Identity()]
     else:
-        activation_functions = [config.activation_function] * (len(config.layers)-1)
+        activation_functions = [config.activation_function] * (len(config.layers) - 2) + [Sigmoid()]
 
     # train
     mlp = MLP(
@@ -99,7 +101,7 @@ if __name__ == "__main__":
     mlp.train(
         x,
         y,
-        iterations=config.number_of_iterations // config.batch_size,
+        iterations=config.number_of_iterations,
         batch_size=config.batch_size,
         learning_rate=config.learning_rate,
         momentum=config.momentum,

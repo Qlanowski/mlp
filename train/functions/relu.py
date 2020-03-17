@@ -7,7 +7,10 @@ class ReLU(ActivationFunction):
         pass
 
     def function(self, x):
-        return np.maximum(0, x)
+        output = np.where(x > 0, x, x * 0.01)
+        return output
 
     def derivative(self, x):
-        return (x > 0) * 1.
+        dx = np.ones_like(x)
+        dx[x < 0] = 0.01
+        return dx

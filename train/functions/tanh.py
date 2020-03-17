@@ -10,4 +10,4 @@ class Tanh(ActivationFunction):
         return np.tanh(x)
 
     def derivative(self, x):
-        return 1.0 - (np.tanh(x) ** 2)
+        return 1.0 - np.tanh(x) ** 2

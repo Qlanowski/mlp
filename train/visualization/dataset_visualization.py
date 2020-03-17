@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 colors = ["red", "blue", "green", "yellow", "purple", "orange", "white", "black"]
 
 
-def visualise_data_set_classes(x, y):
+def visualise_data_set_classes(x, y, save=False, filename=None):
     classes = y.iloc[:, 0].unique()
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -24,4 +24,7 @@ def visualise_data_set_classes(x, y):
     ax.set_ylabel("x2")
     ax.set_title("Dataset visualisation")
     ax.legend(loc=2)
-    fig.show()
+    if save and filename:
+        fig.savefig(filename)
+    else:
+        fig.show()

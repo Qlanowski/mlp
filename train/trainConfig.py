@@ -1,7 +1,6 @@
 import random
 
 from train.functions.identity import Identity
-from train.functions.logistic import Logistic
 from train.functions.relu import ReLU
 from train.functions.sigmoid import Sigmoid
 from train.functions.tanh import Tanh
@@ -22,8 +21,6 @@ class TrainConfig:
         elif activation_function == 2:
             self.activation_function = Tanh()
         elif activation_function == 3:
-            self.activation_function = Logistic()
-        elif activation_function == 4:
             self.activation_function = Identity()
 
         self.bias = bias == 1

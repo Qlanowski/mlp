@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -70,6 +71,7 @@ def save_classification_plot_to_accuracy(config, fields, values, x_label, y_labe
     accuracies = [a * 100 for res, a in results]
     fig = plt.figure()
     ax = fig.add_subplot(111)
+    ax.set_ylim([30, 100])
     p = ax.plot(values, accuracies, 'b')
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

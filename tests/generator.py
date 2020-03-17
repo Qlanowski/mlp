@@ -6,6 +6,7 @@ import train.parser as pr
 import train.accuracy as acc
 from train.mlp import MLP
 from train.visualization.visualizer import Visualizer
+from train.functions.sigmoid import Sigmoid
 
 
 class TestConfig:
@@ -37,7 +38,7 @@ def get_single_classification_test_result(config):
     mlp = MLP(
         network_size=layers,
         is_bias=config.is_bias,
-        activation_functions=[config.activation_function] * (len(layers) - 1),
+        activation_functions=[config.activation_function] * (len(layers) - 2) + [Sigmoid()],
         cost_function=config.cost_function,
         visualizer=Visualizer(None, None)
     )

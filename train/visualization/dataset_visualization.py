@@ -1,10 +1,14 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 colors = ["red", "blue", "green", "yellow", "purple", "orange", "white", "black"]
 
 
-def visualise_data_set_classes(x, y, save=False, filename=None):
+def visualise_data_set_classes(data_filename, save=False, filename=None):
+    df = pd.read_csv(data_filename)
+    x = df.iloc[:, :-1]
+    y = df.iloc[:, -1:]
     classes = y.iloc[:, 0].unique()
     fig = plt.figure()
     ax = fig.add_subplot(111)

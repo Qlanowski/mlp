@@ -9,6 +9,7 @@ from train.mlp import MLP
 from train.trainConfig import TrainConfig
 from train.visualization.networkVisualizer import NetworkVisualizer
 from train.cost_functions import QuadraticCostFunction
+from train.accuracy import get_classification_accuracy
 
 
 def main(argv):
@@ -105,8 +106,9 @@ if __name__ == "__main__":
     y_result = mlp.predict(x_test)
     if config.problem == 0:
         y_result = parser.merge_y_classes(y_result, classes)
+        print('accuracy:', get_classification_accuracy(y_result, y_test))
 
     print(y_result)
-    print(mlp.cost_function.function(y_result, y_test))
+    print('cost:', np.sum(mlp.cost_function.function(y_result.to_numpy(), y_test.to_numpy())))
 
     # save net

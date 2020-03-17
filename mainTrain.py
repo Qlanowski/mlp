@@ -102,7 +102,8 @@ if __name__ == "__main__":
         iterations=config.number_of_iterations // config.batch_size,
         batch_size=config.batch_size,
         learning_rate=config.learning_rate,
-        momentum=config.momentum
+        momentum=config.momentum,
+        seed=config.seed
     )
 
     y_result = mlp.predict(x_test)

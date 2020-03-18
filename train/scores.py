@@ -3,3 +3,4 @@ def get_classification_accuracy(result, expected):
     for res, exp in zip(result.iloc[:, 0], expected.iloc[:, 0]):
         accurate += int(res == exp)
     return accurate / len(expected)
+

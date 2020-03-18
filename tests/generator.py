@@ -4,7 +4,7 @@ import os
 from matplotlib import pyplot as plt
 
 import train.parser as pr
-import train.accuracy as acc
+import train.scores as sc
 from train.mlp import MLP
 from train.visualization.visualizer import Visualizer
 from train.functions.sigmoid import Sigmoid
@@ -73,8 +73,8 @@ def get_single_classification_test_result(config, iterations):
     x_test, y_test = pr.load_data(config.test_file)
     test_set_result = pr.merge_y_classes(mlp.predict(x_test), classes)
     train_set_result = pr.merge_y_classes(mlp.predict(x_train), classes)
-    test_set_accuracy = acc.get_classification_accuracy(test_set_result, y_test)
-    train_set_accuracy = acc.get_classification_accuracy(train_set_result, y)
+    test_set_accuracy = sc.get_classification_accuracy(test_set_result, y_test)
+    train_set_accuracy = sc.get_classification_accuracy(train_set_result, y)
     print('test set accuracy:', test_set_accuracy)
     print('train set accuracy:', train_set_accuracy)
     return TestResult(

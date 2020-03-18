@@ -12,11 +12,12 @@ class MLP:
         self.visualizer = visualizer
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum, seed=None):
+        epochs = iterations // batch_size
         self.__init_weights(seed)
         x_train = x.transpose().to_numpy()
         y_train = y.transpose().to_numpy()
         data = self.__transform_data_to_tuples(x_train, y_train)
-        for i in range(iterations):
+        for e in range(epochs):
             batches = self.__split_to_batches(data, batch_size)
             old_w_change = [np.zeros(w.shape) for w in self.weights]
             old_b_change = np.zeros(len(self.biases))
@@ -28,7 +29,7 @@ class MLP:
                     old_w_change,
                     old_b_change)
                 self.visualizer.update(self.weights, self.biases)
-            print("iteration " + str(i+1) + " of " + str(iterations))
+            print(f'Epoch {e + 1}/{epochs} completed')
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()

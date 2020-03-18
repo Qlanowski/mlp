@@ -2,6 +2,13 @@ import numpy as np
 import pandas as pd
 
 
+def load_data(filename):
+    df = pd.read_csv(filename)
+    x = df.iloc[:, :-1]
+    y = df.iloc[:, -1:]
+    return x, y
+
+
 def split_y_classes(y):
     classes = y.iloc[:, 0].unique()
     result = pd.DataFrame(
@@ -19,3 +26,4 @@ def merge_y_classes(y, classes):
         classes[np.argmax(row)]
         for row in y_to_np
     )
+

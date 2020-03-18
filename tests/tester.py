@@ -4,8 +4,8 @@ from train.functions.relu import ReLU
 from train.cost_functions import QuadraticCostFunction
 
 config = generator.TestConfig(
-    train_file="../classification/data.three_gauss.train.100.csv",
-    test_file="../classification/data.three_gauss.test.100.csv",
+    train_file="../classification/data.three_gauss.train.500.csv",
+    test_file="../classification/data.three_gauss.test.500.csv",
     hid_layers=[5, 5],
     act_func=ReLU(),
     cost_func=QuadraticCostFunction(),
@@ -26,5 +26,5 @@ generator.visualise_classification_test_series(
     results=results,
     title='Classification Accuracy for ReLU',
     save=True,
-    filename='results/test.png'
+    filename='results/' + generator.get_test_filename(config)
 )

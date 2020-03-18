@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import os
 from matplotlib import pyplot as plt
 
 import train.parser as pr
@@ -30,6 +31,18 @@ class TestResult:
         self.test_set_score = test_set_score
         self.train_set_result = train_set_result
         self.train_set_score = train_set_score
+
+
+def get_test_filename(config):
+    return (f'{type(config.activation_function).__name__.lower()}_'
+            f'{"-".join(str(l) for l in config.hidden_layers)}l_'
+            f'{ "" if config.is_bias else "n"}b_'
+            f'{type(config.cost_function).__name__.lower()}_'
+            f'{config.batch_size}bs_'
+            f'{config.learning_rate}lr_'
+            f'{config.momentum}m_'
+            f'{config.seed}s_'
+            f'{os.path.basename(os.path.splitext(config.train_file)[0])}.png')
 
 
 def get_test_mlp(config, input_size, output_size, activation_functions):

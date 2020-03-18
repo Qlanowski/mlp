@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import random
 
 
 class MLP:
@@ -12,13 +13,15 @@ class MLP:
         self.visualizer = visualizer
 
     def train(self, x, y, iterations, batch_size, learning_rate, momentum, seed=None):
-        epochs = iterations // batch_size
         self.__init_weights(seed)
         x_train = x.transpose().to_numpy()
         y_train = y.transpose().to_numpy()
         data = self.__transform_data_to_tuples(x_train, y_train)
-        for e in range(epochs):
-            batches = self.__split_to_batches(data, batch_size)
+        shuffled_data = self.__shuffle_data_set(data, seed)
+        i = 0
+        while i < iterations:
+            shuffled_data = self.__shuffle_data_set(shuffled_data, seed)
+            batches = self.__split_to_batches(shuffled_data, batch_size)
             old_w_change = [np.zeros(w.shape) for w in self.weights]
             old_b_change = np.zeros(len(self.biases))
             for batch in batches:
@@ -29,7 +32,10 @@ class MLP:
                     old_w_change,
                     old_b_change)
                 self.visualizer.update(self.weights, self.biases)
-            print(f'Epoch {e + 1}/{epochs} completed')
+                print(f'Iteration {i + 1}/{iterations} completed')
+                i += 1
+                if i >= iterations:
+                    return
 
     def predict(self, data):
         result = data.copy().transpose().to_numpy()
@@ -127,6 +133,13 @@ class MLP:
         x_vectors = np.hsplit(x, n)
         y_vectors = np.hsplit(y, n)
         return list(zip(x_vectors, y_vectors))
+
+    @staticmethod
+    def __shuffle_data_set(data, seed):
+        random.seed(seed)
+        data_cpy = data.copy()
+        random.shuffle(data_cpy)
+        return data_cpy
 
     @staticmethod
     def __split_to_batches(data, batch_size):

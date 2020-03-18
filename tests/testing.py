@@ -20,7 +20,7 @@ def perform_tests_and_save(tester_instance, iteration_list, results_directory):
         results = tester_instance.perform_test_series(iteration_list)
         tv.visualise_test_results(
             results=results,
-            title=tester_instance.get_test_name(),
+            title=tester_instance.get_test_title(),
             y_label=tester_instance.get_score_name(),
             save=True,
             filename=results_directory + config.get_name() + '.png'

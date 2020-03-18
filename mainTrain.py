@@ -9,7 +9,7 @@ from train.mlp import MLP
 from train.trainConfig import TrainConfig
 from train.visualization.networkVisualizer import NetworkVisualizer
 from train.cost_functions import QuadraticCostFunction
-from train.accuracy import get_classification_accuracy
+from train.scores import get_classification_accuracy
 
 
 def main(argv):

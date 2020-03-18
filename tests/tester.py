@@ -47,7 +47,7 @@ class Tester:
     def __init__(self, config):
         self.config = config
 
-    def get_test_name(self):
+    def get_test_title(self):
         return "Base test"
 
     def get_score_name(self):
@@ -116,7 +116,7 @@ class ClassificationTester(Tester):
     def __init__(self, config):
         super().__init__(config)
 
-    def get_test_name(self):
+    def get_test_title(self):
         return f'Classification for {type(self.config.activation_function).__name__}'
 
     def get_score_name(self):
@@ -142,7 +142,7 @@ class RegressionTester(Tester):
     def __init__(self, config):
         super().__init__(config)
 
-    def get_test_name(self):
+    def get_test_title(self):
         return f'Regression for {type(self.config.activation_function).__name__}'
 
     def get_score_name(self):

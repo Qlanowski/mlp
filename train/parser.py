@@ -28,9 +28,5 @@ def merge_y_classes(y, classes):
     )
 
 
-def normalize_y(y):
-    y_series = y.iloc[:, 0]
-    max_val = y_series.max()
-    min_val = y_series.min()
-    length = abs(max_val - min_val)
-    return pd.DataFrame((y_series - min_val) / length)
+def normalize_data(df):
+    return (df - df.min()) / (df.max() - df.min())

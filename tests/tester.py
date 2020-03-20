@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 import train.parser as pr
 import train.scores as sc
@@ -149,8 +150,9 @@ class RegressionTester(Tester):
         return f"Error ({type(self.config.cost_function).__name__})"
 
     def get_data(self, filename):
-        x, y = pr.load_data(filename)
-        return pr.normalize_data(x), pr.normalize_data(y)
+        df = pd.read_csv(filename)
+        normalized_df = pr.normalize_data(df)
+        return normalized_df.iloc[:, :-1], normalized_df.iloc[:, -1:]
 
     def get_score(self, expected, result):
         return sc.get_regression_score(result, expected, self.config.cost_function)

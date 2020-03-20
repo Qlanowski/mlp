@@ -22,7 +22,7 @@ import numpy as np
 
 class Network(object):
 
-    def __init__(self, sizes, activation_functions):
+    def __init__(self, sizes, is_bias, activation_functions, cost_function):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  For example, if the list
         was [2, 3, 1] then it would be a three-layer network, with the
@@ -35,7 +35,9 @@ class Network(object):
         ever used in computing the outputs from later layers."""
         self.num_layers = len(sizes)
         self.sizes = sizes
+        self.is_bias = is_bias
         self.activation_functions = activation_functions
+        self.cost_function = cost_function
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
@@ -85,7 +87,8 @@ class Network(object):
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         for x, y in mini_batch:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
-            nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+            if(self.is_bias):
+                nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
         self.weights = [w - (eta / len(mini_batch)) * nw
                         for w, nw in zip(self.weights, nabla_w)]
@@ -127,16 +130,7 @@ class Network(object):
             nabla_w[-l] = np.dot(delta, activations[-l - 1].transpose())
         return (nabla_b, nabla_w)
 
-    def evaluate(self, test_data):
-        """Return the number of test inputs for which the neural
-        network outputs the correct result. Note that the neural
-        network's output is assumed to be the index of whichever
-        neuron in the final layer has the highest activation."""
-        test_results = [(np.argmax(self.feedforward(x)), y)
-                        for (x, y) in test_data]
-        return sum(int(x == y) for (x, y) in test_results)
-
     def cost_derivative(self, output_activations, y):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
-        return (output_activations - y)
+        return self.cost_function.derivative(output_activations, y)

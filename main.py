@@ -2,6 +2,7 @@ from train import network
 import train.parser as pr
 import numpy as np
 
+from train.cost_functions import QuadraticCostFunction
 from train.functions.sigmoid import Sigmoid
 from train.functions.relu import ReLU
 
@@ -33,9 +34,17 @@ epochs = 100
 batch_size = 10
 learning_rate = 0.1
 activation_functions = [ReLU()] * (len(layers) - 2) + [Sigmoid()]
+cost_function = QuadraticCostFunction()
+is_bias=True
 
-net = network.Network(layers, activation_functions)
-net.SGD(train_data, epochs=epochs, mini_batch_size=batch_size, eta=learning_rate)
+net = network.Network(layers,
+                      is_bias=is_bias,
+                      activation_functions=activation_functions,
+                      cost_function=cost_function)
+net.SGD(train_data,
+        epochs=epochs,
+        mini_batch_size=batch_size,
+        eta=learning_rate)
 
 test_results = [(np.argmax(net.feedforward(x)) + 1, y) for (x, y) in test_data]
 result = sum(int(x == y) for (x, y) in test_results)

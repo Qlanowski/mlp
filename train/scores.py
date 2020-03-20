@@ -9,4 +9,4 @@ def get_classification_accuracy(result, expected):
 
 
 def get_regression_score(result, expected, cost_function):
-    return np.sum(cost_function.function(expected, result))
+    return np.sum(cost_function.function(expected.to_numpy(), result.to_numpy()).squeeze())

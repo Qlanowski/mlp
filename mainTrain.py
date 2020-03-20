@@ -71,8 +71,8 @@ if __name__ == "__main__":
     config = main(sys.argv[1:])
     # load data
     df = pd.read_csv(config.input_file)
-    if config.problem == 1:
-        df = (df - df.min()) / (df.max() - df.min())
+    # if config.problem == 1:
+    #     df = (df - df.min()) / (df.max() - df.min())
 
     x = df.iloc[:, :-1]
     y = df.iloc[:, -1:]
@@ -81,8 +81,8 @@ if __name__ == "__main__":
         y, classes = parser.split_y_classes(y)
 
     test_df = pd.read_csv(config.test_file)
-    if config.problem == 1:
-        test_df = (test_df - test_df.min()) / (test_df.max() - test_df.min())
+    # if config.problem == 1:
+    #     test_df = (test_df - test_df.min()) / (test_df.max() - test_df.min())
 
     x_test = test_df.iloc[:, :-1]
     y_test = test_df.iloc[:, -1:]

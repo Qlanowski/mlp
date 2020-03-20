@@ -49,4 +49,3 @@ net.SGD(train_data,
 test_results = [(np.argmax(net.feedforward(x)) + 1, y) for (x, y) in test_data]
 result = sum(int(x == y) for (x, y) in test_results)
 print(result / len(test_results))
-net.evaluate(test_data)

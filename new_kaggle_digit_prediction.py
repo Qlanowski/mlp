@@ -1,3 +1,4 @@
+from train.functions.tanh import Tanh
 from train.network import Network
 import numpy as np
 import pandas as pd
@@ -90,7 +91,7 @@ def main():
     batch_size = 10
     iterations = len(train_data) / batch_size * 2
     learning_rate = 3
-    activation_functions = [Sigmoid()] * (len(layers) - 2) + [Sigmoid()]
+    activation_functions = [Tanh()] * (len(layers) - 2) + [Sigmoid()]
     cost_function = QuadraticCostFunction()
     is_bias = True
     seed = 1000

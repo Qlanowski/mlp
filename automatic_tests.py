@@ -197,7 +197,7 @@ class RegressionConfiguration:
         print(f'Iteration {iteration}/{iterations} completed; Test err: {test_err:.2f}; Train err: {train_err:.2f}')
 
 
-def perform_tests_and_save(tester, results_directory):
+def perform_tests_and_save(tester, results_directory, limit_axes):
     if not os.path.exists(results_directory):
         os.makedirs(results_directory)
 
@@ -207,7 +207,8 @@ def perform_tests_and_save(tester, results_directory):
         title=tester.get_test_title(),
         y_label=tester.get_score_name(),
         save=True,
-        filename=results_directory + tester.get_name() + '.png'
+        filename=results_directory + tester.get_name() + '.png',
+        limit_axes=limit_axes
     )
 
 
@@ -229,29 +230,31 @@ def classification_test():
 
     perform_tests_and_save(
         tester=tester,
-        results_directory='tests/results/classification/'
+        results_directory='tests/results/classification/',
+        limit_axes=True
     )
 
 
 def regression_test():
     tester = RegressionConfiguration(
-        train_file="regression/data.activation.train.100.csv",
+        train_file="regression/data.activation.train.10000.csv",
         test_file="regression/data.activation.test.100.csv",
-        iterations=30000,
-        hid_layers=[7, 7],
+        iterations=10000,
+        hid_layers=[5],
         act_func=ReLU(),
         cost_func=QuadraticCostFunction(),
         is_bias=True,
         batch_size=10,
-        lr=0.0001,
-        moment=0.01,
+        lr=0.001,
+        moment=0.09,
         seed=1000,
         collect_results_for_iterations=50
     )
 
     perform_tests_and_save(
         tester=tester,
-        results_directory='tests/results/regression/'
+        results_directory='tests/results/regression/',
+        limit_axes=False
     )
 
 

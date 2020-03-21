@@ -24,8 +24,8 @@ def load_test_classification(filename):
     return [(np.array(_x).reshape(-1, 1), _y[0]) for _x, _y in zip(x, y)]
 
 
-train_filename = r'C:\Users\ulano\PycharmProjects\mlp\classification\data.three_gauss.train.100.csv'
-test_filename = r'C:\Users\ulano\PycharmProjects\mlp\classification\data.three_gauss.test.100.csv'
+train_filename = r'classification\data.three_gauss.train.100.csv'
+test_filename = r'classification\data.three_gauss.test.100.csv'
 
 train_data = load_classification(train_filename)
 test_data = load_test_classification(test_filename)

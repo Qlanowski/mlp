@@ -22,8 +22,8 @@ def load_test_regression(filename):
     return [(np.array(_x).reshape(-1, 1), _y[0]) for _x, _y in zip(x, y)]
 
 
-train_filename = r'C:\Users\ulano\PycharmProjects\mlp\regression\data.activation.train.100.csv'
-test_filename = r'C:\Users\ulano\PycharmProjects\mlp\regression\data.activation.test.100.csv'
+train_filename = r'regression\data.activation.train.100.csv'
+test_filename = r'regression\data.activation.test.100.csv'
 
 train_data = load_regression(train_filename)
 test_data = load_test_regression(test_filename)

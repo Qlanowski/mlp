@@ -5,6 +5,7 @@ import numpy as np
 from train.cost_functions import QuadraticCostFunction
 from train.functions.identity import Identity
 from train.functions.relu import ReLU
+from train.visualization.networkVisualizer import NetworkVisualizer
 
 
 def load_regression(filename):
@@ -35,12 +36,15 @@ activation_functions = [ReLU()] * (len(layers) - 2) + [Identity()]
 cost_function = QuadraticCostFunction()
 is_bias = True
 seed = 1000
-momentum=0.01
+momentum = 0.01
+
+visualizer = NetworkVisualizer(layers, is_bias)
 
 net = network.Network(layers,
                       is_bias=is_bias,
                       activation_functions=activation_functions,
-                      cost_function=cost_function)
+                      cost_function=cost_function,
+                      visualizer=visualizer)
 net.SGD(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,

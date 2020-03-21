@@ -5,6 +5,7 @@ import numpy as np
 from train.cost_functions import QuadraticCostFunction
 from train.functions.sigmoid import Sigmoid
 from train.functions.relu import ReLU
+from train.visualization.networkVisualizer import NetworkVisualizer
 
 
 def load_classification(filename):
@@ -30,7 +31,7 @@ train_data = load_classification(train_filename)
 test_data = load_test_classification(test_filename)
 
 layers = [train_data[0][0].shape[0], 10, 10, train_data[0][1].shape[0]]
-iterations = 1000
+iterations = 100
 batch_size = 10
 learning_rate = 0.1
 activation_functions = [ReLU()] * (len(layers) - 2) + [Sigmoid()]
@@ -38,11 +39,13 @@ cost_function = QuadraticCostFunction()
 is_bias = True
 seed = 1000
 momentum = 0.01
+visualizer = NetworkVisualizer(layers, is_bias)
 
 net = network.Network(layers,
                       is_bias=is_bias,
                       activation_functions=activation_functions,
-                      cost_function=cost_function)
+                      cost_function=cost_function,
+                      visualizer=visualizer)
 net.SGD(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,

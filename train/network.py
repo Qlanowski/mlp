@@ -22,12 +22,13 @@ import numpy as np
 
 class Network(object):
 
-    def __init__(self, sizes, is_bias, activation_functions, cost_function):
+    def __init__(self, sizes, is_bias, activation_functions, cost_function, visualizer):
         self.num_layers = len(sizes)
         self.sizes = sizes
         self.is_bias = is_bias
         self.activation_functions = activation_functions
         self.cost_function = cost_function
+        self.visualizer = visualizer
         # self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         # self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
         # self.last_biases_change = [np.zeros(b.shape) for b in self.biases]
@@ -63,6 +64,7 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, learning_rate, momentum)
                 print(f'Iteration {i + 1}/{iterations} completed')
+                self.visualizer.update(self.weights, self.biases)
                 i += 1
                 if i >= iterations:
                     return

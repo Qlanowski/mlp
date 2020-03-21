@@ -23,41 +23,53 @@ def load_test_regression(filename):
     return [(np.array(_x).reshape(-1, 1), _y[0]) for _x, _y in zip(x, y)]
 
 
-train_filename = r'regression\data.activation.train.100.csv'
-test_filename = r'regression\data.activation.test.100.csv'
+def run_scoring(iteration, iterations, network, train_data, test_data):
+    if iteration % 500:
+        return
 
-train_data = load_regression(train_filename)
-test_data = load_test_regression(test_filename)
+    test_results = [(network.predict(x), y) for (x, y) in test_data]
+    result = sum((x - y) ** 2 for (x, y) in test_results)
 
-layers = [train_data[0][0].shape[0], 7, train_data[0][1].shape[0]]
-iterations = 3000
-batch_size = 10
-learning_rate = 0.0001
-activation_functions = [ReLU()] * (len(layers) - 2) + [Identity()]
-cost_function = QuadraticCostFunction()
-is_bias = True
-seed = 1000
-momentum = 0.01
+    train_results = [(network.predict(x), y) for (x, y) in train_data]
+    result2 = sum((x - y) ** 2 for (x, y) in train_results)
 
-visualizer = Visualizer(layers, is_bias)
+    print(f'Iteration {iteration}/{iterations} completed; Test score: {result}; Train score: {result2}')
 
-net = network.Network(layers,
-                      is_bias=is_bias,
-                      activation_functions=activation_functions,
-                      cost_function=cost_function,
-                      visualizer=visualizer)
-net.train(train_data,
-        iterations=iterations,
-        mini_batch_size=batch_size,
-        learning_rate=learning_rate,
-        momentum=momentum,
-        seed=seed)
 
-test_results = [(net.predict(x), y) for (x, y) in test_data]
-npa = np.array(test_results)
-result = sum((x - y) ** 2 for (x, y) in test_results)
-print(f'Test score: {result}')
+def main():
+    train_filename = r'regression\data.activation.train.100.csv'
+    test_filename = r'regression\data.activation.test.100.csv'
 
-train_results = [(net.predict(x), y) for (x, y) in train_data]
-result2 = sum((x - y) ** 2 for (x, y) in train_results)
-print(f'Train score: {result2}')
+    train_data = load_regression(train_filename)
+    test_data = load_test_regression(test_filename)
+
+    layers = [train_data[0][0].shape[0], 7,7, train_data[0][1].shape[0]]
+    iterations = 30000
+    batch_size = 10
+    learning_rate = 0.0001
+    activation_functions = [ReLU()] * (len(layers) - 2) + [Identity()]
+    cost_function = QuadraticCostFunction()
+    is_bias = True
+    seed = 1000
+    momentum = 0.01
+
+    visualizer = Visualizer(layers, is_bias)
+
+    net = network.Network(layers,
+                          is_bias=is_bias,
+                          activation_functions=activation_functions,
+                          cost_function=cost_function,
+                          visualizer=visualizer)
+    net.train(train_data,
+              iterations=iterations,
+              mini_batch_size=batch_size,
+              learning_rate=learning_rate,
+              momentum=momentum,
+              seed=seed,
+              iteration_function=run_scoring,
+              iteration_train_data=train_data,
+              iteration_test_data=test_data)
+
+
+if __name__ == "__main__":
+    main()

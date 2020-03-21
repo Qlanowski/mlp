@@ -35,8 +35,9 @@ batch_size = 10
 learning_rate = 0.1
 activation_functions = [ReLU()] * (len(layers) - 2) + [Sigmoid()]
 cost_function = QuadraticCostFunction()
-is_bias=True
+is_bias = True
 seed = 1000
+momentum = 0.01
 
 net = network.Network(layers,
                       is_bias=is_bias,
@@ -46,6 +47,7 @@ net.SGD(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,
         learning_rate=learning_rate,
+        momentum=momentum,
         seed=seed)
 
 test_results = [(np.argmax(net.feedforward(x)) + 1, y) for (x, y) in test_data]

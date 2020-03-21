@@ -43,7 +43,7 @@ net = network.Network(layers,
 net.SGD(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,
-        eta=learning_rate)
+        learning_rate=learning_rate)
 
 test_results = [(net.feedforward(x), y) for (x, y) in test_data]
 npa = np.array(test_results)

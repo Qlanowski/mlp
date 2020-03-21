@@ -30,7 +30,7 @@ train_data = load_classification(train_filename)
 test_data = load_test_classification(test_filename)
 
 layers = [train_data[0][0].shape[0], 10, 10, train_data[0][1].shape[0]]
-iterations = 100
+iterations = 1000
 batch_size = 10
 learning_rate = 0.1
 activation_functions = [ReLU()] * (len(layers) - 2) + [Sigmoid()]
@@ -44,7 +44,7 @@ net = network.Network(layers,
 net.SGD(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,
-        eta=learning_rate)
+        learning_rate=learning_rate)
 
 test_results = [(np.argmax(net.feedforward(x)) + 1, y) for (x, y) in test_data]
 result = sum(int(x == y) for (x, y) in test_results)

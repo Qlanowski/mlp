@@ -7,6 +7,7 @@ from train.functions.sigmoid import Sigmoid
 from train.functions.tanh import Tanh
 import train.parser as pr
 import numpy as np
+import  pandas as pd
 import tests.test_visualisation as tv
 from train.network import Network
 from train.visualization.visualizer import Visualizer
@@ -103,6 +104,109 @@ class ClassificationConfiguration:
         test_acc = test_result / len(test_results)
 
         train_results = [(np.argmax(network.predict(x)) + 1, y) for (x, y) in train_data]
+        train_result = sum(int(x == y) for (x, y) in train_results)
+        train_acc = train_result / len(train_results)
+        self.results += [TestResult(iteration, test_acc * 100, train_acc * 100)]
+        print(f'Iteration {iteration}/{iterations} completed; Test acc: {test_acc:.4f}; Train acc: {train_acc:.4f}')
+
+
+class KaggleConfiguration:
+    def __init__(self, train_file, test_file, iterations, hid_layers, act_func,
+                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations, split):
+        self.train_file = train_file
+        self.test_file = test_file
+        self.iterations = iterations
+        self.hidden_layers = hid_layers
+        self.activation_function = act_func
+        self.cost_function = cost_func
+        self.is_bias = is_bias
+        self.batch_size = batch_size
+        self.learning_rate = lr
+        self.momentum = momentum
+        self.seed = seed
+        self.collect_results_for_iterations = collect_results_for_iterations
+        self.split = split
+        self.results = []
+
+    def get_test_title(self):
+        return f'Classification for {type(self.activation_function).__name__}'
+
+    def get_score_name(self):
+        return "Accuracy %"
+
+    def get_name(self):
+        return (f'{type(self.activation_function).__name__.lower()}_'
+                f'{"-".join(str(l) for l in self.hidden_layers)}l_'
+                f'{"" if self.is_bias else "n"}b_'
+                f'{type(self.cost_function).__name__.lower()}_'
+                f'{self.batch_size}bs_'
+                f'{self.learning_rate}lr_'
+                f'{self.momentum}m_'
+                f'{self.seed}s_'
+                f'{os.path.basename(os.path.splitext(self.train_file)[0])}')
+
+    def perform_test(self):
+        train_df, test_df = self.__train_test(self.train_file, self.split, self.seed)
+        train_data = self.__prepare_to_train(train_df)
+        test_data = self.__prepare_to_test(test_df)
+        train_data_evaluation = self.__prepare_to_test(train_df)
+
+        layers = self.hidden_layers + [train_data[0][1].shape[0]]
+        layers.insert(0, train_data[0][0].shape[0])
+        activation_functions = [self.activation_function] * (len(layers) - 2) + [Sigmoid()]
+        visualizer = Visualizer(layers, self.is_bias)
+        net = Network(layers,
+                      is_bias=self.is_bias,
+                      activation_functions=activation_functions,
+                      cost_function=self.cost_function,
+                      visualizer=visualizer)
+        net.train(train_data,
+                  iterations=self.iterations,
+                  mini_batch_size=self.batch_size,
+                  learning_rate=self.learning_rate,
+                  momentum=self.momentum,
+                  seed=self.seed,
+                  iteration_function=self.__run_scoring,
+                  iteration_train_data=train_data_evaluation,
+                  iteration_test_data=test_data)
+
+        return self.results
+
+    @staticmethod
+    def __train_test(filename, train_frac, seed):
+        df = pd.read_csv(filename)
+        train_df = df.sample(frac=train_frac, random_state=seed)  # random state is a seed value
+        test_df = df.drop(train_df.index)
+        return train_df, test_df
+
+    @staticmethod
+    def __prepare_to_train(df):
+        x = df.iloc[:, 1:] / 255
+        y = df.iloc[:, 0]
+        y_vec = np.array([np.zeros(10) for i in y])
+        for v, i in zip(y_vec, y):
+            v[i] = 1
+
+        x = np.array(x)
+        return [(np.array(_x).reshape(-1, 1), np.array(_y).reshape(-1, 1)) for _x, _y in zip(x, y_vec)]
+
+    @staticmethod
+    def __prepare_to_test(df):
+        x = df.iloc[:, 1:] / 255
+        y = df.iloc[:, 0]
+        x = np.array(x)
+        y = np.array(y)
+        return [(np.array(_x).reshape(-1, 1), _y) for _x, _y in zip(x, y)]
+
+    def __run_scoring(self, iteration, iterations, network, train_data, test_data):
+        if iteration % self.collect_results_for_iterations:
+            return
+
+        test_results = [(np.argmax(network.predict(x)), y) for (x, y) in test_data]
+        test_result = sum(int(x == y) for (x, y) in test_results)
+        test_acc = test_result / len(test_results)
+
+        train_results = [(np.argmax(network.predict(x)), y) for (x, y) in train_data]
         train_result = sum(int(x == y) for (x, y) in train_results)
         train_acc = train_result / len(train_results)
         self.results += [TestResult(iteration, test_acc * 100, train_acc * 100)]
@@ -206,23 +310,47 @@ def perform_tests_and_save(tester, results_directory, limit_axes):
 
 def classification_test():
     tester = ClassificationConfiguration(
-        train_file="classification/data.three_gauss.train.500.csv",
-        test_file="classification/data.three_gauss.test.500.csv",
-        iterations=1000,
-        hid_layers=[5, 5],
-        act_func=ReLU(),
+        train_file="kaggle_digits/custom_train.csv",
+        test_file="kaggle_digits/custom_test.csv",
+        iterations=10000,
+        hid_layers=[10],
+        act_func=Sigmoid(),
         cost_func=QuadraticCostFunction(),
         is_bias=True,
         batch_size=10,
-        lr=0.3,
-        momentum=0.2,
-        seed=123456789,
-        collect_results_for_iterations=50
+        lr=3,
+        momentum=0.01,
+        seed=1000,
+        collect_results_for_iterations=100
     )
 
     perform_tests_and_save(
         tester=tester,
         results_directory='tests/results/classification/',
+        limit_axes=True
+    )
+
+
+def kaggle_test():
+    tester = KaggleConfiguration(
+        train_file="kaggle_digits/train.csv",
+        test_file="kaggle_digits/test.csv",
+        iterations=5000,
+        hid_layers=[10],
+        act_func=Sigmoid(),
+        cost_func=QuadraticCostFunction(),
+        is_bias=True,
+        batch_size=10,
+        lr=3,
+        momentum=0.01,
+        seed=1000,
+        collect_results_for_iterations=100,
+        split=0.7
+    )
+
+    perform_tests_and_save(
+        tester=tester,
+        results_directory='tests/results/kaggle/',
         limit_axes=True
     )
 
@@ -252,4 +380,5 @@ def regression_test():
 
 if __name__ == "__main__":
     # classification_test()
-    regression_test()
+    kaggle_test()
+    # regression_test()

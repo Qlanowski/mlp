@@ -47,13 +47,13 @@ net = network.Network(layers,
                       activation_functions=activation_functions,
                       cost_function=cost_function,
                       visualizer=visualizer)
-net.SGD(train_data,
+net.train(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,
         learning_rate=learning_rate,
         momentum=momentum,
         seed=seed)
 
-test_results = [(np.argmax(net.feedforward(x)) + 1, y) for (x, y) in test_data]
+test_results = [(np.argmax(net.predict(x)) + 1, y) for (x, y) in test_data]
 result = sum(int(x == y) for (x, y) in test_results)
 print(result / len(test_results))

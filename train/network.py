@@ -34,13 +34,13 @@ class Network(object):
         # self.last_biases_change = [np.zeros(b.shape) for b in self.biases]
         # self.last_weights_change = [np.zeros(w.shape) for w in self.weights]
 
-    def feedforward(self, a):
+    def predict(self, a):
         """Return the output of the network if ``a`` is input."""
         for b, w, f in zip(self.biases, self.weights, self.activation_functions):
             a = f.function(np.dot(w, a) + b)
         return a
 
-    def SGD(self, training_data, iterations, mini_batch_size, learning_rate, momentum, seed):
+    def train(self, training_data, iterations, mini_batch_size, learning_rate, momentum, seed):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired

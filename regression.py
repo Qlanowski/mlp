@@ -46,18 +46,18 @@ net = network.Network(layers,
                       activation_functions=activation_functions,
                       cost_function=cost_function,
                       visualizer=visualizer)
-net.SGD(train_data,
+net.train(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,
         learning_rate=learning_rate,
         momentum=momentum,
         seed=seed)
 
-test_results = [(net.feedforward(x), y) for (x, y) in test_data]
+test_results = [(net.predict(x), y) for (x, y) in test_data]
 npa = np.array(test_results)
 result = sum((x - y) ** 2 for (x, y) in test_results)
 print(f'Test score: {result}')
 
-train_results = [(net.feedforward(x), y) for (x, y) in train_data]
+train_results = [(net.predict(x), y) for (x, y) in train_data]
 result2 = sum((x - y) ** 2 for (x, y) in train_results)
 print(f'Train score: {result2}')

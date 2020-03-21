@@ -21,7 +21,7 @@ class TestResult:
 
 class ClassificationConfiguration:
     def __init__(self, train_file, test_file, iterations, hid_layers, act_func,
-                 cost_func, is_bias, batch_size, lr, moment, seed, collect_results_for_iterations):
+                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations):
         self.train_file = train_file
         self.test_file = test_file
         self.iterations = iterations
@@ -31,7 +31,7 @@ class ClassificationConfiguration:
         self.is_bias = is_bias
         self.batch_size = batch_size
         self.learning_rate = lr
-        self.momentum = moment
+        self.momentum = momentum
         self.seed = seed
         self.collect_results_for_iterations = collect_results_for_iterations
         self.results = []
@@ -111,7 +111,7 @@ class ClassificationConfiguration:
 
 class RegressionConfiguration:
     def __init__(self, train_file, test_file, iterations, hid_layers, act_func,
-                 cost_func, is_bias, batch_size, lr, moment, seed, collect_results_for_iterations):
+                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations):
         self.train_file = train_file
         self.test_file = test_file
         self.iterations = iterations
@@ -121,7 +121,7 @@ class RegressionConfiguration:
         self.is_bias = is_bias
         self.batch_size = batch_size
         self.learning_rate = lr
-        self.momentum = moment
+        self.momentum = momentum
         self.seed = seed
         self.collect_results_for_iterations = collect_results_for_iterations
         self.results = []
@@ -144,9 +144,8 @@ class RegressionConfiguration:
                 f'{os.path.basename(os.path.splitext(self.train_file)[0])}')
 
     def perform_test(self):
-        train_data = self.__get_train_data(self.train_file)
-        test_data = self.__get_test_data(self.test_file)
-        train_data_for_evaluation = self.__get_test_data(self.train_file)
+        train_data = self.__get_data(self.train_file)
+        test_data = self.__get_data(self.test_file)
 
         layers = self.hidden_layers + [train_data[0][1].shape[0]]
         layers.insert(0, train_data[0][0].shape[0])
@@ -170,28 +169,21 @@ class RegressionConfiguration:
         return self.results
 
     @staticmethod
-    def __get_train_data(filename):
+    def __get_data(filename):
         x, y = pr.load_data(filename)
         x = np.array(x)
         y = np.array(y)
         return [(np.array(_x).reshape(-1, 1), np.array(_y).reshape(-1, 1)) for _x, _y in zip(x, y)]
-
-    @staticmethod
-    def __get_test_data(filename):
-        x, y = pr.load_data(filename)
-        x = np.array(x)
-        y = np.array(y)
-        return [(np.array(_x).reshape(-1, 1), _y[0]) for _x, _y in zip(x, y)]
 
     def __run_scoring(self, iteration, iterations, network, train_data, test_data):
         if iteration % self.collect_results_for_iterations:
             return
 
         test_results = [(network.predict(x), y) for (x, y) in test_data]
-        test_err = sum(self.cost_function.function(x, y) for (x, y) in test_results)[0][0]
+        test_err = sum(self.cost_function.function(x[0][0], y[0][0]) for (x, y) in test_results)
 
         train_results = [(network.predict(x), y) for (x, y) in train_data]
-        train_err = sum((self.cost_function.function(x, y) for (x, y) in train_results))[0][0]
+        train_err = sum(self.cost_function.function(x[0][0], y[0][0]) for (x, y) in train_results)
 
         self.results += [TestResult(iteration, test_err, train_err)]
         print(f'Iteration {iteration}/{iterations} completed; Test err: {test_err:.2f}; Train err: {train_err:.2f}')
@@ -223,7 +215,7 @@ def classification_test():
         is_bias=True,
         batch_size=10,
         lr=0.3,
-        moment=0.2,
+        momentum=0.2,
         seed=123456789,
         collect_results_for_iterations=50
     )
@@ -240,13 +232,13 @@ def regression_test():
         train_file="regression/data.activation.train.10000.csv",
         test_file="regression/data.activation.test.100.csv",
         iterations=10000,
-        hid_layers=[5],
+        hid_layers=[7],
         act_func=ReLU(),
         cost_func=QuadraticCostFunction(),
         is_bias=True,
         batch_size=10,
-        lr=0.001,
-        moment=0.09,
+        lr=0.0001,
+        momentum=0,
         seed=1000,
         collect_results_for_iterations=50
     )

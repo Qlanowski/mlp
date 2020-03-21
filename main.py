@@ -6,6 +6,7 @@ from train.cost_functions import QuadraticCostFunction
 from train.functions.sigmoid import Sigmoid
 from train.functions.relu import ReLU
 from train.visualization.networkVisualizer import NetworkVisualizer
+from train.visualization.visualizer import Visualizer
 
 
 def load_classification(filename):
@@ -24,14 +25,14 @@ def load_test_classification(filename):
     return [(np.array(_x).reshape(-1, 1), _y[0]) for _x, _y in zip(x, y)]
 
 
-train_filename = r'classification\data.three_gauss.train.100.csv'
-test_filename = r'classification\data.three_gauss.test.100.csv'
+train_filename = r'classification\data.three_gauss.train.10000.csv'
+test_filename = r'classification\data.three_gauss.test.10000.csv'
 
 train_data = load_classification(train_filename)
 test_data = load_test_classification(test_filename)
 
 layers = [train_data[0][0].shape[0], 10, 10, train_data[0][1].shape[0]]
-iterations = 100
+iterations = 1000
 batch_size = 10
 learning_rate = 0.1
 activation_functions = [ReLU()] * (len(layers) - 2) + [Sigmoid()]
@@ -39,7 +40,7 @@ cost_function = QuadraticCostFunction()
 is_bias = True
 seed = 1000
 momentum = 0.01
-visualizer = NetworkVisualizer(layers, is_bias)
+visualizer = Visualizer(layers, is_bias)
 
 net = network.Network(layers,
                       is_bias=is_bias,

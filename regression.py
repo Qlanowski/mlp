@@ -6,6 +6,7 @@ from train.cost_functions import QuadraticCostFunction
 from train.functions.identity import Identity
 from train.functions.relu import ReLU
 from train.visualization.networkVisualizer import NetworkVisualizer
+from train.visualization.visualizer import Visualizer
 
 
 def load_regression(filename):
@@ -38,7 +39,7 @@ is_bias = True
 seed = 1000
 momentum = 0.01
 
-visualizer = NetworkVisualizer(layers, is_bias)
+visualizer = Visualizer(layers, is_bias)
 
 net = network.Network(layers,
                       is_bias=is_bias,

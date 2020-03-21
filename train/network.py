@@ -44,12 +44,11 @@ class Network(object):
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
-        for b, w, f in zip(self.biases, self.weights,self.activation_functions):
+        for b, w, f in zip(self.biases, self.weights, self.activation_functions):
             a = f.function(np.dot(w, a) + b)
         return a
 
-    def SGD(self, training_data, iterations, mini_batch_size, learning_rate,
-            test_data=None):
+    def SGD(self, training_data, iterations, mini_batch_size, learning_rate, seed):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired
@@ -58,13 +57,11 @@ class Network(object):
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
         tracking progress, but slows things down substantially."""
+        self.__init_weights(seed)
+        random.seed(seed)
 
         training_data = list(training_data)
         n = len(training_data)
-
-        if test_data:
-            test_data = list(test_data)
-            n_test = len(test_data)
 
         i = 0
         while i < iterations:
@@ -132,6 +129,10 @@ class Network(object):
         return (nabla_b, nabla_w)
 
     def cost_derivative(self, output_activations, y):
-        """Return the vector of partial derivatives \partial C_x /
-        \partial a for the output activations."""
         return self.cost_function.derivative(output_activations, y)
+
+    def __init_weights(self, seed):
+        np.random.seed(seed)
+        self.biases = [np.random.randn(y, 1) for y in self.sizes[1:]]
+        self.weights = [np.random.randn(y, x)
+                        for x, y in zip(self.sizes[:-1], self.sizes[1:])]

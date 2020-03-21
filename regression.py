@@ -35,7 +35,7 @@ learning_rate = 0.0001
 activation_functions = [ReLU()] * (len(layers) - 2) + [Identity()]
 cost_function = QuadraticCostFunction()
 is_bias = True
-
+seed = 1000
 net = network.Network(layers,
                       is_bias=is_bias,
                       activation_functions=activation_functions,
@@ -43,7 +43,8 @@ net = network.Network(layers,
 net.SGD(train_data,
         iterations=iterations,
         mini_batch_size=batch_size,
-        learning_rate=learning_rate)
+        learning_rate=learning_rate,
+        seed=seed)
 
 test_results = [(net.feedforward(x), y) for (x, y) in test_data]
 npa = np.array(test_results)

@@ -29,7 +29,7 @@ train_data = load_regression(train_filename)
 test_data = load_test_regression(test_filename)
 
 layers = [train_data[0][0].shape[0], 7, train_data[0][1].shape[0]]
-epochs = 300
+iterations = 3000
 batch_size = 10
 learning_rate = 0.0001
 activation_functions = [ReLU()] * (len(layers) - 2) + [Identity()]
@@ -41,7 +41,7 @@ net = network.Network(layers,
                       activation_functions=activation_functions,
                       cost_function=cost_function)
 net.SGD(train_data,
-        epochs=epochs,
+        iterations=iterations,
         mini_batch_size=batch_size,
         eta=learning_rate)
 

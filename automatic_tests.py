@@ -285,9 +285,11 @@ class RegressionConfiguration:
 
         test_results = [(network.predict(x), y) for (x, y) in test_data]
         test_err = sum(self.cost_function.function(x[0][0], y[0][0]) for (x, y) in test_results)
+        test_err /= len(test_results)
 
         train_results = [(network.predict(x), y) for (x, y) in train_data]
         train_err = sum(self.cost_function.function(x[0][0], y[0][0]) for (x, y) in train_results)
+        train_err /= len(train_results)
 
         self.results += [TestResult(iteration, test_err, train_err)]
         print(f'Iteration {iteration}/{iterations} completed; Test err: {test_err:.2f}; Train err: {train_err:.2f}')

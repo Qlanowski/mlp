@@ -14,7 +14,7 @@ class TrainConfig:
 
     def __init__(self, layers, activation_function, cost_function, bias, batch_size, number_of_iterations,
                  learning_rate, momentum,
-                 problem, input_file, test_file, seed, visualizer, collect_results_for_iterations):
+                 problem, input_file, test_file, seed, visualizer, collect_results_for_iterations, split):
         self.layers = layers
         if activation_function == 0:
             self.activation_function = ReLU()
@@ -43,9 +43,6 @@ class TrainConfig:
         else:
             self.seed = seed
 
-        if int(visualizer) == 1:
-            self.visualizer = NetworkVisualizer(self.layers, self.bias)
-        else:
-            self.visualizer = Visualizer(self.layers, self.bias)
-
+        self.visualizer = int(visualizer) == 1
         self.collect_results_for_iterations = collect_results_for_iterations
+        self.split = split

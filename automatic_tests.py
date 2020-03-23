@@ -12,6 +12,7 @@ import  pandas as pd
 import tests.test_visualisation as tv
 from train.network import Network
 from train.trainConfig import TrainConfig
+from train.visualization.networkVisualizer import NetworkVisualizer
 from train.visualization.visualizer import Visualizer
 
 
@@ -24,7 +25,7 @@ class TestResult:
 
 class ClassificationConfiguration:
     def __init__(self, train_file, test_file, iterations, hid_layers, act_func,
-                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations):
+                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations, visualizer):
         self.train_file = train_file
         self.test_file = test_file
         self.iterations = iterations
@@ -38,6 +39,7 @@ class ClassificationConfiguration:
         self.seed = seed
         self.collect_results_for_iterations = collect_results_for_iterations
         self.results = []
+        self.visualizer = visualizer
 
     def get_test_title(self):
         return f'Classification for {type(self.activation_function).__name__}'
@@ -64,7 +66,10 @@ class ClassificationConfiguration:
         layers = self.hidden_layers + [train_data[0][1].shape[0]]
         layers.insert(0, train_data[0][0].shape[0])
         activation_functions = [self.activation_function] * (len(layers) - 2) + [Sigmoid()]
-        visualizer = Visualizer(layers, self.is_bias)
+        if self.visualizer:
+            visualizer = NetworkVisualizer(layers, self.is_bias)
+        else:
+            visualizer = Visualizer(layers, self.is_bias)
         net = Network(layers,
                       is_bias=self.is_bias,
                       activation_functions=activation_functions,
@@ -114,7 +119,7 @@ class ClassificationConfiguration:
 
 class KaggleConfiguration:
     def __init__(self, train_file, test_file, iterations, hid_layers, act_func,
-                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations, split):
+                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations, split, visualizer):
         self.train_file = train_file
         self.test_file = test_file
         self.iterations = iterations
@@ -129,6 +134,7 @@ class KaggleConfiguration:
         self.collect_results_for_iterations = collect_results_for_iterations
         self.split = split
         self.results = []
+        self.visualizer = visualizer
 
     def get_test_title(self):
         return f'Classification for {type(self.activation_function).__name__}'
@@ -156,7 +162,10 @@ class KaggleConfiguration:
         layers = self.hidden_layers + [train_data[0][1].shape[0]]
         layers.insert(0, train_data[0][0].shape[0])
         activation_functions = [self.activation_function] * (len(layers) - 2) + [Sigmoid()]
-        visualizer = Visualizer(layers, self.is_bias)
+        if self.visualizer:
+            visualizer = NetworkVisualizer(layers, self.is_bias)
+        else:
+            visualizer = Visualizer(layers, self.is_bias)
         net = Network(layers,
                       is_bias=self.is_bias,
                       activation_functions=activation_functions,
@@ -217,7 +226,7 @@ class KaggleConfiguration:
 
 class RegressionConfiguration:
     def __init__(self, train_file, test_file, iterations, hid_layers, act_func,
-                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations):
+                 cost_func, is_bias, batch_size, lr, momentum, seed, collect_results_for_iterations, visualizer):
         self.train_file = train_file
         self.test_file = test_file
         self.iterations = iterations
@@ -231,6 +240,7 @@ class RegressionConfiguration:
         self.seed = seed
         self.collect_results_for_iterations = collect_results_for_iterations
         self.results = []
+        self.visualizer = visualizer
 
     def get_test_title(self):
         return f'Regression for {type(self.activation_function).__name__}'
@@ -256,7 +266,10 @@ class RegressionConfiguration:
         layers = self.hidden_layers + [train_data[0][1].shape[0]]
         layers.insert(0, train_data[0][0].shape[0])
         activation_functions = [self.activation_function] * (len(layers) - 2) + [Identity()]
-        visualizer = Visualizer(layers, self.is_bias)
+        if self.visualizer:
+            visualizer = NetworkVisualizer(layers, self.is_bias)
+        else:
+            visualizer = Visualizer(layers, self.is_bias)
         net = Network(layers,
                       is_bias=self.is_bias,
                       activation_functions=activation_functions,
@@ -314,25 +327,29 @@ def perform_tests_and_save(tester, results_directory, limit_axes):
 
 def read_configuration(argv):
     help_txt = 'mainTrain.py ' \
-               '-l <"1,2,1"> ' \
+               '-l <"5,5,5"> ' \
                '-f <"0" - ReLU | "1" -... |> ' \
+               '-c <"0" - Quadratic | "1" -Cross Entropy |> ' \
                '-b <bias> ' \
                '-s <batch_size> ' \
                '-n <number_of_iterations> ' \
                '-r <learning_rate> ' \
-               '-m <momentum> -p <0 - cls | 1 - reg> ' \
+               '-m <momentum> -p <0 - cls | 1 - reg | 2 - kaggle> ' \
                '-i <input_file>' \
                '-t <test_input_file' \
                '-d seed -1 random' \
-               '-v visualizer 1 or 0'
+               '-v visualizer 1 or 0' \
+               '-a collect_results_for_iterations' \
+               '-x train split for kaggle dataset'
     try:
-        opts, args = getopt.getopt(argv, "hl:f:c:b:s:n:r:m:p:i:t:d:v:a:",
+        opts, args = getopt.getopt(argv, "hl:f:c:b:s:n:r:m:p:i:t:d:v:a:x:",
                                    ["help", "layers=", "activation_function=", "cost_function=" "bias=", "batch_size=",
                                     "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=",
-                                    "test=", "seed=", "visualizer="])
+                                    "test=", "seed=", "visualizer=", "--collect_results_for_iterations", "--split"])
     except getopt.GetoptError:
         print(help_txt)
         sys.exit(2)
+
     for opt, arg in opts:
         if opt == '-h':
             print(help_txt)
@@ -365,24 +382,28 @@ def read_configuration(argv):
             visualizer = int(arg)
         elif opt in ("-a", "--collect_results_for_iterations"):
             collect_results_for_iterations = int(arg)
+        elif opt in ("-x", "--split"):
+            split = float(arg)
 
     return TrainConfig(layers, activation_function, cost_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
-                       problem, input_file, test_file, seed, visualizer, collect_results_for_iterations)
+                       problem, input_file, test_file, seed, visualizer, collect_results_for_iterations, split)
 
-def classification_test():
+
+def classification_test(config):
     tester = ClassificationConfiguration(
-        train_file="kaggle_digits/custom_train.csv",
-        test_file="kaggle_digits/custom_test.csv",
-        iterations=10000,
-        hid_layers=[10],
-        act_func=Sigmoid(),
-        cost_func=QuadraticCostFunction(),
-        is_bias=True,
-        batch_size=10,
-        lr=3,
-        momentum=0.01,
-        seed=1000,
-        collect_results_for_iterations=100
+        train_file=config.input_file,
+        test_file=config.test_file,
+        iterations=config.number_of_iterations,
+        hid_layers=config.layers,
+        act_func=config.activation_function,
+        cost_func=config.cost_function,
+        is_bias=config.bias,
+        batch_size=config.batch_size,
+        lr=config.learning_rate,
+        momentum=config.momentum,
+        seed=config.seed,
+        collect_results_for_iterations=config.collect_results_for_iterations,
+        visualizer=config.visualizer
     )
 
     perform_tests_and_save(
@@ -392,21 +413,22 @@ def classification_test():
     )
 
 
-def kaggle_test():
+def kaggle_test(config):
     tester = KaggleConfiguration(
         train_file="kaggle_digits/train.csv",
         test_file="kaggle_digits/test.csv",
-        iterations=5000,
-        hid_layers=[10],
-        act_func=Sigmoid(),
-        cost_func=QuadraticCostFunction(),
-        is_bias=True,
-        batch_size=10,
-        lr=3,
-        momentum=0.01,
-        seed=1000,
-        collect_results_for_iterations=100,
-        split=0.7
+        iterations=config.number_of_iterations,
+        hid_layers=config.layers,
+        act_func=config.activation_function,
+        cost_func=config.cost_function,
+        is_bias=config.bias,
+        batch_size=config.batch_size,
+        lr=config.learning_rate,
+        momentum=config.momentum,
+        seed=config.seed,
+        collect_results_for_iterations=config.collect_results_for_iterations,
+        split=config.split,
+        visualizer=config.visualizer
     )
 
     perform_tests_and_save(
@@ -429,7 +451,8 @@ def regression_test(config):
         lr=config.learning_rate,
         momentum=config.momentum,
         seed=config.seed,
-        collect_results_for_iterations=config.collect_results_for_iterations
+        collect_results_for_iterations=config.collect_results_for_iterations,
+        visualizer=config.visualizer
     )
 
     perform_tests_and_save(

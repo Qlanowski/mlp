@@ -355,7 +355,10 @@ def read_configuration(argv):
             print(help_txt)
             sys.exit()
         elif opt in ("-l", "--layers"):
-            layers = [int(x) for x in arg.split(",")]
+            if arg == "0":
+                layers = []
+            else:
+                layers = [int(x) for x in arg.split(",")]
         elif opt in ("-f", "--activation_function"):
             activation_function = int(arg)
         elif opt in ("-c", "--cost_function"):

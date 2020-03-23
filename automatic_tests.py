@@ -1,5 +1,6 @@
 import os
-
+import getopt
+import sys
 from train.cost_functions import QuadraticCostFunction
 from train.functions.identity import Identity
 from train.functions.relu import ReLU
@@ -10,6 +11,7 @@ import numpy as np
 import  pandas as pd
 import tests.test_visualisation as tv
 from train.network import Network
+from train.trainConfig import TrainConfig
 from train.visualization.visualizer import Visualizer
 
 
@@ -310,6 +312,63 @@ def perform_tests_and_save(tester, results_directory, limit_axes):
     )
 
 
+def read_configuration(argv):
+    help_txt = 'mainTrain.py ' \
+               '-l <"1,2,1"> ' \
+               '-f <"0" - ReLU | "1" -... |> ' \
+               '-b <bias> ' \
+               '-s <batch_size> ' \
+               '-n <number_of_iterations> ' \
+               '-r <learning_rate> ' \
+               '-m <momentum> -p <0 - cls | 1 - reg> ' \
+               '-i <input_file>' \
+               '-t <test_input_file' \
+               '-d seed -1 random' \
+               '-v visualizer 1 or 0'
+    try:
+        opts, args = getopt.getopt(argv, "hl:f:c:b:s:n:r:m:p:i:t:d:v:a:",
+                                   ["help", "layers=", "activation_function=", "cost_function=" "bias=", "batch_size=",
+                                    "number_of_iterations=", "learning_rate=", "momentum=", "problem=", "input=",
+                                    "test=", "seed=", "visualizer="])
+    except getopt.GetoptError:
+        print(help_txt)
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print(help_txt)
+            sys.exit()
+        elif opt in ("-l", "--layers"):
+            layers = [int(x) for x in arg.split(",")]
+        elif opt in ("-f", "--activation_function"):
+            activation_function = int(arg)
+        elif opt in ("-c", "--cost_function"):
+            cost_function = int(arg)
+        elif opt in ("-b", "--bias"):
+            bias = int(arg)
+        elif opt in ("-s", "--batch_size"):
+            batch_size = int(arg)
+        elif opt in ("-n", "--number_of_iterations"):
+            number_of_iterations = int(arg)
+        elif opt in ("-r", "--learning_rate"):
+            learning_rate = float(arg)
+        elif opt in ("-m", "--momentum"):
+            momentum = float(arg)
+        elif opt in ("-p", "--problem"):
+            problem = int(arg)
+        elif opt in ("-i", "--input"):
+            input_file = arg
+        elif opt in ("-t", "--test"):
+            test_file = arg
+        elif opt in ("-d", "--seed"):
+            seed = int(arg)
+        elif opt in ("-v", "--visualizer"):
+            visualizer = int(arg)
+        elif opt in ("-a", "--collect_results_for_iterations"):
+            collect_results_for_iterations = int(arg)
+
+    return TrainConfig(layers, activation_function, cost_function, bias, batch_size, number_of_iterations, learning_rate, momentum,
+                       problem, input_file, test_file, seed, visualizer, collect_results_for_iterations)
+
 def classification_test():
     tester = ClassificationConfiguration(
         train_file="kaggle_digits/custom_train.csv",
@@ -357,20 +416,20 @@ def kaggle_test():
     )
 
 
-def regression_test():
+def regression_test(config):
     tester = RegressionConfiguration(
-        train_file="regression/data.activation.train.10000.csv",
-        test_file="regression/data.activation.test.100.csv",
-        iterations=10000,
-        hid_layers=[7],
-        act_func=ReLU(),
-        cost_func=QuadraticCostFunction(),
-        is_bias=True,
-        batch_size=10,
-        lr=0.0001,
-        momentum=0,
-        seed=1000,
-        collect_results_for_iterations=50
+        train_file=config.input_file,
+        test_file=config.test_file,
+        iterations=config.number_of_iterations,
+        hid_layers=config.layers,
+        act_func=config.activation_function,
+        cost_func=config.cost_function,
+        is_bias=config.bias,
+        batch_size=config.batch_size,
+        lr=config.learning_rate,
+        momentum=config.momentum,
+        seed=config.seed,
+        collect_results_for_iterations=config.collect_results_for_iterations
     )
 
     perform_tests_and_save(
@@ -381,6 +440,10 @@ def regression_test():
 
 
 if __name__ == "__main__":
-    # classification_test()
-    kaggle_test()
-    # regression_test()
+    config = read_configuration(sys.argv[1:])
+    if config.problem == 0:
+        classification_test(config)
+    elif config.problem == 1:
+        regression_test(config)
+    else:
+        kaggle_test(config)
